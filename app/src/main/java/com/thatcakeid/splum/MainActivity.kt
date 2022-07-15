@@ -35,7 +35,12 @@ class MainActivity : AppCompatActivity() {
 
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
 
-        val session = GeckoSession()
+        val settings = GeckoSessionSettings.Builder()
+            .useTrackingProtection(false)
+            .userAgentOverride("Mozilla/5.0 (Linux; Android " + android.os.Build.VERSION.RELEASE.toString() + "; " + android.os.Build.MODEL + ") AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36")
+            .build()
+
+        val session = GeckoSession(settings)
 
         shippedDomainsProvider.initialize(this)
         customDomainsProvider.initialize(this)
@@ -64,12 +69,6 @@ class MainActivity : AppCompatActivity() {
             sRuntime = GeckoRuntime.create(this)
         }
 
-        val settings = GeckoSessionSettings.Builder()
-            .chromeUri("splum")
-            .useTrackingProtection(true)
-            .userAgentOverride("")
-            .build()
-
         session.open(sRuntime!!)
         geckoView.setSession(session)
         session.loadUri("https://google.com")
@@ -80,21 +79,6 @@ class MainActivity : AppCompatActivity() {
 
             true
         }
-
-        /*
-        editTextSearch.setOnEditorActionListener { _, actionId, _ ->
-            session.loadUri(editTextSearch.text.toString())
-            true
-        }
-
-        tabIcon.setOnClickListener { _ ->
-
-        }
-
-        moreIcon.setOnClickListener { _ ->
-
-        }
-        */
 
         session.progressDelegate = object : ProgressDelegate {
             override fun onPageStart(session: GeckoSession, url: String) {
