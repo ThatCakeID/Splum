@@ -44,8 +44,10 @@ dependencies {
     implementation 'org.mozilla.components:ui-tabcounter:103.0.5'
     implementation 'org.mozilla.components:browser-tabstray:103.0.5'
     implementation 'org.mozilla.components:browser-toolbar:103.0.5'
+    implementation 'org.mozilla.components:feature-toolbar:103.0.5'
     implementation 'org.mozilla.components:browser-menu:103.0.5'
     implementation 'org.mozilla.components:concept-menu:103.0.5'
+    implementation 'org.mozilla.components:browser-domains:103.0.5'
 
     testImplementation 'junit:junit:4.13.2'
 

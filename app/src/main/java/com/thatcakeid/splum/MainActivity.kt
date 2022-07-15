@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.geckoview.*
@@ -14,10 +15,16 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.ui.tabcounter.TabCounter
 import java.util.*
+import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
+import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
+import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 
 
 class MainActivity : AppCompatActivity() {
     private var sRuntime: GeckoRuntime? = null
+
+    private val shippedDomainsProvider = ShippedDomainsProvider()
+    private val customDomainsProvider = CustomDomainsProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,13 +35,15 @@ class MainActivity : AppCompatActivity() {
 
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
 
-        /*
-        val editTextSearch = findViewById<EditText>(R.id.editTextTextPersonName)
-        val tabIcon = findViewById<TabCounter>(R.id.tabIcon)
-        val moreIcon = findViewById<ImageView>(R.id.moreIcon)
-        */
-
         val session = GeckoSession()
+
+        shippedDomainsProvider.initialize(this)
+        customDomainsProvider.initialize(this)
+
+        ToolbarAutocompleteFeature(toolBar).apply {
+            this.addDomainProvider(shippedDomainsProvider)
+            this.addDomainProvider(customDomainsProvider)
+        }
 
         session.contentDelegate = object : ContentDelegate {}
         progressBar.visibility = View.GONE
