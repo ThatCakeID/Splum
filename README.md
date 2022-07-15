@@ -19,8 +19,8 @@
 </h2>
 
 <p>
-  <img alt="Browser" src="https://cdn.discordapp.com/attachments/878304967939731476/997491520628338689/Screenshot_20220715-151431_Splum.jpg">
-  <img alt="Context Menu" src="https://cdn.discordapp.com/attachments/878304967939731476/997491521106477089/Screenshot_20220715-151435_Splum.jpg">
+  <img alt="Browser" src="https://cdn.discordapp.com/attachments/878304967939731476/997491520628338689/Screenshot_20220715-151431_Splum.jpg" width="20%">
+  <img alt="Context Menu" src="https://cdn.discordapp.com/attachments/878304967939731476/997491521106477089/Screenshot_20220715-151435_Splum.jpg" width="20%">
 </p>
 
 <h2>
