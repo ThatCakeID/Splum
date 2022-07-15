@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <!-- <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -47,8 +47,15 @@
                 android:text="about:about" />
         </LinearLayout>
 
+        <mozilla.components.ui.tabcounter.TabCounter
+            android:id="@+id/tabIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="6dp"
+            app:tabCounterTintColor="@color/white" />
+
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/moreIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="6dp"
@@ -57,6 +64,12 @@
             app:srcCompat="@drawable/ic_more_vert" />
 
     </LinearLayout>
+    -->
+
+    <mozilla.components.browser.toolbar.BrowserToolbar
+        android:id="@+id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <ProgressBar
         android:id="@+id/progressBar"

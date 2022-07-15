@@ -32,13 +32,20 @@ android {
 }
 
 dependencies {
-    implementation 'org.mozilla.components:support-base:+'
+    implementation 'org.mozilla.components:support-base:103.0.5'
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'org.mozilla.geckoview:geckoview:100.0.20220425210429'
+
+    implementation 'org.mozilla.components:browser-errorpages:103.0.5'
+    implementation 'org.mozilla.components:ui-tabcounter:103.0.5'
+    implementation 'org.mozilla.components:browser-tabstray:103.0.5'
+    implementation 'org.mozilla.components:browser-toolbar:103.0.5'
+    implementation 'org.mozilla.components:browser-menu:103.0.5'
+    implementation 'org.mozilla.components:concept-menu:103.0.5'
 
     testImplementation 'junit:junit:4.13.2'
 
