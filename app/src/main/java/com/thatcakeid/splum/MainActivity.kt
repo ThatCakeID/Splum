@@ -1,5 +1,6 @@
 package com.thatcakeid.splum
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
@@ -7,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
 import mozilla.components.browser.menu.BrowserMenuBuilder
-import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
 import org.mozilla.geckoview.*
 import org.mozilla.geckoview.GeckoSession.ContentDelegate
 import org.mozilla.geckoview.GeckoSession.ProgressDelegate
@@ -17,6 +17,7 @@ import mozilla.components.ui.tabcounter.TabCounter
 import java.util.*
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
+import mozilla.components.browser.menu.item.*
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 
 
@@ -55,13 +56,53 @@ class MainActivity : AppCompatActivity() {
 
         toolBar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
 
-        val shareItem = SimpleBrowserMenuItem("Share…") { /* Do nothing */ }
-        val homeScreenItem = SimpleBrowserMenuItem("Add to Home screen") { /* Do nothing */ }
-        val openItem = SimpleBrowserMenuItem("Open in…") { /* Do nothing */ }
-        val settingsItem = SimpleBrowserMenuItem("Settings") { /* Do nothing */ }
+        val backIc = BrowserMenuItemToolbar.Button(
+            R.drawable.ic_arrow_back,
+            "Back",
+            isEnabled = { true }
+        ) {
+            session.goBack()
+        }
 
-        val items = listOf(shareItem, homeScreenItem, openItem, settingsItem)
+        val forwardIc = BrowserMenuItemToolbar.Button(R.drawable.ic_arrow_forward, "Forward") {
+            session.goForward()
+        }
+
+        val reloadIc = BrowserMenuItemToolbar.Button(R.drawable.ic_refresh, "Reload") {
+            session.reload()
+        }
+
+        val bookmarkIc = BrowserMenuItemToolbar.Button(R.drawable.ic_bookmark_border, "Bookmark") {
+
+        }
+
+        val menuToolbar         = BrowserMenuItemToolbar(listOf(backIc, forwardIc, reloadIc, bookmarkIc))
+
+        val newTabItem          = BrowserMenuImageText("New Tab", R.drawable.ic_add) { /* Do nothing */ }
+        val newTabIncognitoItem = BrowserMenuImageText("New Private Tab", R.drawable.ic_add) { /* Do nothing */ }
+
+        val historyItemIc       = BrowserMenuImageText("History", R.drawable.ic_history) { /* Do nothing */ }
+        val downloadsItemIc     = BrowserMenuImageText("Downloads", R.drawable.ic_arrow_downward) { /* Do nothing */ }
+        val bookmarksItemIc     = BrowserMenuImageText("Bookmarks", R.drawable.ic_bookmarks) { /* Do nothing */ }
+
+        val shareItemIc         = BrowserMenuImageText("Share", R.drawable.ic_share) {
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, toolBar.url)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
+        val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View") { /* Do nothing */ }
+
+        val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) { /* Do nothing */ }
+
+        val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem)
         toolBar.display.menuBuilder = BrowserMenuBuilder(items)
+
+        toolBar.edit.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close)!!, "Close")
 
         toolBar.url = "https://google.com/"
 
