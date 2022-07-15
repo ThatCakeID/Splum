@@ -28,7 +28,19 @@
 </h2>
 
 <p>
-  This section is not finished
+  Currently you can find prebuilt APKs at https://cdn.theclashfruit.me/apps/splum/.
+</p>
+
+<p>
+  Building it:
+  
+  <ol>
+    <li>Clone the repo with <code>git clone https://github.com/ThatCakeID/Splum.git</code></li>
+    <li>Go into the folder with <code>cd Splum</code></li>
+    <li>Build Splum with <code>./gradlew build</code></li>
+  </ol>
+  
+  That's it!
 </p>
 
 <h2>
