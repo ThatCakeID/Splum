@@ -5,6 +5,7 @@
 
     <color name="colorSecondary">#6AC931</color>
     <color name="colorSecondaryDark">#6AC931</color>
+    <color name="colorSecondaryTransparent">#386AC931</color>
 
     <color name="colorBlack">#FF000000</color>
     <color name="colorWhite">#FFFFFFFF</color>

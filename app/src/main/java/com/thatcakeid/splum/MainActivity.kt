@@ -1,32 +1,28 @@
 package com.thatcakeid.splum
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.view.View
-import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
-import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
-import mozilla.components.browser.menu.BrowserMenuBuilder
-import org.mozilla.geckoview.*
-import org.mozilla.geckoview.GeckoSession.ContentDelegate
-import org.mozilla.geckoview.GeckoSession.ProgressDelegate
-import mozilla.components.browser.toolbar.BrowserToolbar
-import mozilla.components.concept.toolbar.Toolbar
-import mozilla.components.ui.tabcounter.TabCounter
-import java.util.*
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
-import mozilla.components.browser.menu.WebExtensionBrowserMenu
-import mozilla.components.browser.menu.item.*
-import mozilla.components.feature.addons.AddonManager
-import mozilla.components.feature.addons.AddonsProvider
+import mozilla.components.browser.menu.BrowserMenuBuilder
+import mozilla.components.browser.menu.item.BrowserMenuDivider
+import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
+import mozilla.components.browser.menu.item.BrowserMenuImageText
+import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
+import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.feature.toolbar.WebExtensionToolbarFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.mozilla.geckoview.GeckoRuntime
+import org.mozilla.geckoview.GeckoSession
+import org.mozilla.geckoview.GeckoSession.ContentDelegate
+import org.mozilla.geckoview.GeckoSession.ProgressDelegate
+import org.mozilla.geckoview.GeckoSessionSettings
+import org.mozilla.geckoview.GeckoView
 
 
 class MainActivity : AppCompatActivity() {
@@ -106,7 +102,11 @@ class MainActivity : AppCompatActivity() {
         }
         val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View") { /* Do nothing */ }
 
-        val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) { /* Do nothing */ }
+        val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
+            val si: Intent = Intent(this, SettingsActivity::class.java)
+
+            startActivity(si)
+        }
 
         val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem)
         toolBar.display.menuBuilder = BrowserMenuBuilder(items)

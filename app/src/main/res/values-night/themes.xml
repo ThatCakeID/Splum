@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Theme.Splum" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
         <item name="colorOnPrimary">@color/colorWhite</item>
@@ -9,6 +9,25 @@
         <item name="colorSecondaryVariant">@color/colorSecondaryDark</item>
         <item name="colorOnSecondary">@color/colorWhite</item>
 
+        <item name="android:colorBackground">@color/colorPrimary</item>
+        <item name="colorOnBackground">@color/colorWhite</item>
+
+        <item name="materialAlertDialogTheme">@style/Theme.Splum.DialogTheme</item>
+
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <style name="Theme.Splum.DialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/Theme.Splum.ButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Theme.Splum.ButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Theme.Splum.ButtonStyle</item>
+
+        <item name="colorSurface">@color/colorPrimary</item>
+        <item name="colorOnSurface">@color/colorWhite</item>
+    </style>
+
+    <style name="Theme.Splum.ButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorSecondary</item>
+        <item name="rippleColor">@color/colorSecondaryTransparent</item>
     </style>
 </resources>

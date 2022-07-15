@@ -1,0 +1,28 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="ThatCakeID Account">
+        <Preference
+            android:summary="${email}"
+            android:title="${username}" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="sync"
+            android:title="Sync" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Basics">
+        <ListPreference
+            android:entries="@array/search_engines"
+            android:entryValues="@array/search_engines_values"
+            android:key="search_engine"
+            android:title="Search Engine"
+            android:defaultValue="https://google.com/search?q=" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="About">
+        <Preference
+            android:title="Licenses" />
+
+        <Preference
+            android:summary="Copyright (C) 2022 ThatCakeID"
+            android:title="Copyright" />
+    </PreferenceCategory>
+</PreferenceScreen>

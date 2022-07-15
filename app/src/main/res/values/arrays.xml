@@ -1,0 +1,19 @@
+<resources>
+    <string-array name="search_engines">
+        <item>Google</item>
+        <item>Yahoo!</item>
+        <item>Bing</item>
+        <item>Yandex</item>
+        <item>DuckDuckGo</item>
+        <item>KvantumSE</item>
+    </string-array>
+
+    <string-array name="search_engines_values">
+        <item>https://google.com/search?q=</item>
+        <item>https://search.yahoo.com/search?p=</item>
+        <item>https://www.bing.com/search?q=</item>
+        <item>https://yandex.com/search/?text=</item>
+        <item>https://duckduckgo.com/?q=</item>
+        <item>https://kvantum.ga/search?q=</item>
+    </string-array>
+</resources>
