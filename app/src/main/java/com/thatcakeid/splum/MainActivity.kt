@@ -1,10 +1,13 @@
 package com.thatcakeid.splum
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteProvider
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -17,8 +20,13 @@ import mozilla.components.ui.tabcounter.TabCounter
 import java.util.*
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
+import mozilla.components.browser.menu.WebExtensionBrowserMenu
 import mozilla.components.browser.menu.item.*
+import mozilla.components.feature.addons.AddonManager
+import mozilla.components.feature.addons.AddonsProvider
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
+import mozilla.components.feature.toolbar.WebExtensionToolbarFeature
+import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,14 +35,14 @@ class MainActivity : AppCompatActivity() {
     private val shippedDomainsProvider = ShippedDomainsProvider()
     private val customDomainsProvider = CustomDomainsProvider()
 
+    private val webExtToolbarFeature = ViewBoundFeatureWrapper<WebExtensionToolbarFeature>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val geckoView = findViewById<GeckoView>(R.id.geckoview)
         val toolBar = findViewById<BrowserToolbar>(R.id.toolBar)
-
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
 
         val settings = GeckoSessionSettings.Builder()
             .useTrackingProtection(false)
@@ -52,7 +60,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         session.contentDelegate = object : ContentDelegate {}
-        progressBar.visibility = View.GONE
 
         toolBar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
 
@@ -81,6 +88,8 @@ class MainActivity : AppCompatActivity() {
         val newTabItem          = BrowserMenuImageText("New Tab", R.drawable.ic_add) { /* Do nothing */ }
         val newTabIncognitoItem = BrowserMenuImageText("New Private Tab", R.drawable.ic_add) { /* Do nothing */ }
 
+        val extensionsItemIc = BrowserMenuImageText("Extensions", R.drawable.ic_extension) { /* Do nothing */ }
+
         val historyItemIc       = BrowserMenuImageText("History", R.drawable.ic_history) { /* Do nothing */ }
         val downloadsItemIc     = BrowserMenuImageText("Downloads", R.drawable.ic_arrow_downward) { /* Do nothing */ }
         val bookmarksItemIc     = BrowserMenuImageText("Bookmarks", R.drawable.ic_bookmarks) { /* Do nothing */ }
@@ -99,12 +108,9 @@ class MainActivity : AppCompatActivity() {
 
         val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) { /* Do nothing */ }
 
-        val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem)
+        val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem)
         toolBar.display.menuBuilder = BrowserMenuBuilder(items)
-
-        toolBar.edit.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_close)!!, "Close")
-
-        toolBar.url = "https://google.com/"
+        toolBar.elevation = 8F
 
         if (sRuntime == null) {
             sRuntime = GeckoRuntime.create(this)
@@ -112,7 +118,14 @@ class MainActivity : AppCompatActivity() {
 
         session.open(sRuntime!!)
         geckoView.setSession(session)
-        session.loadUri("https://google.com")
+
+        if(intent?.action == Intent.ACTION_VIEW) {
+            toolBar.url = intent?.data.toString()
+            session.loadUri(intent?.data.toString())
+        } else {
+            toolBar.url = "https://google.com/"
+            session.loadUri("https://google.com")
+        }
 
         toolBar.setOnUrlCommitListener { url ->
             session.loadUri(url)
@@ -124,16 +137,10 @@ class MainActivity : AppCompatActivity() {
         session.progressDelegate = object : ProgressDelegate {
             override fun onPageStart(session: GeckoSession, url: String) {
                 toolBar.url = url
-
-                progressBar.visibility = View.VISIBLE
-                progressBar.progress = 0
-            }
-            override fun onPageStop(session: GeckoSession, success: Boolean) {
-                progressBar.visibility = View.GONE
             }
 
             override fun onProgressChange(session: GeckoSession, progress: Int) {
-                progressBar.progress = progress
+                toolBar.displayProgress(progress)
             }
 
             override fun onSecurityChange(
@@ -146,6 +153,12 @@ class MainActivity : AppCompatActivity() {
                     toolBar.siteSecure = Toolbar.SiteSecurity.INSECURE
 
                 super.onSecurityChange(session, securityInfo)
+            }
+        }
+
+        session.navigationDelegate = object : GeckoSession.NavigationDelegate {
+            override fun onLocationChange(session: GeckoSession, url: String?) {
+                toolBar.url = url!!
             }
         }
     }
