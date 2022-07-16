@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -103,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View") { /* Do nothing */ }
 
         val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
-            val si: Intent = Intent(this, SettingsActivity::class.java)
+            val si = Intent(this, SettingsActivity::class.java)
 
             startActivity(si)
         }

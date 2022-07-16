@@ -9,4 +9,6 @@
 
     <color name="colorBlack">#FF000000</color>
     <color name="colorWhite">#FFFFFFFF</color>
+
+    <color name="ic_launcher_background">#151A1B</color>
 </resources>

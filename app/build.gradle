@@ -11,7 +11,7 @@ android {
         minSdk 26
         targetSdk 32
         versionCode 1
-        versionName "1.0"
+        versionName '1.5'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -20,36 +20,45 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            minifyEnabled true
+            shrinkResources true
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    aaptOptions {
+        cruncherEnabled = false
     }
 }
 
 dependencies {
-    implementation 'org.mozilla.components:support-base:103.0.5'
-
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
     implementation 'org.mozilla.geckoview:geckoview:100.0.20220425210429'
 
-    implementation 'org.mozilla.components:browser-errorpages:103.0.5'
-    implementation 'org.mozilla.components:ui-tabcounter:103.0.5'
-    implementation 'org.mozilla.components:browser-tabstray:103.0.5'
-    implementation 'org.mozilla.components:browser-toolbar:103.0.5'
-    implementation 'org.mozilla.components:feature-toolbar:103.0.5'
-    implementation 'org.mozilla.components:browser-menu:103.0.5'
-    implementation 'org.mozilla.components:concept-menu:103.0.5'
-    implementation 'org.mozilla.components:browser-domains:103.0.5'
-    implementation 'org.mozilla.components:feature-addons:103.0.5'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'org.mozilla.components:browser-errorpages:103.0.8'
+    implementation 'org.mozilla.components:browser-tabstray:103.0.8'
+    implementation 'org.mozilla.components:browser-toolbar:103.0.8'
+    implementation 'org.mozilla.components:feature-toolbar:103.0.8'
+    implementation 'org.mozilla.components:browser-menu:103.0.8'
+    implementation 'org.mozilla.components:concept-menu:103.0.8'
+    implementation 'org.mozilla.components:browser-domains:103.0.8'
+    implementation 'org.mozilla.components:feature-addons:103.0.8'
+
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation project(path: ':ThatCakeIDServices')
 
     testImplementation 'junit:junit:4.13.2'
 

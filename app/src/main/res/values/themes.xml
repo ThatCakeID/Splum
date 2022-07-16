@@ -13,7 +13,7 @@
 
         <item name="materialAlertDialogTheme">@style/Theme.Splum.DialogTheme</item>
 
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
     </style>
 
     <style name="Theme.Splum.DialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">

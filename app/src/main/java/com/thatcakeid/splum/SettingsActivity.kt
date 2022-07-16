@@ -3,6 +3,7 @@ package com.thatcakeid.splum
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
+import com.thatcakeid.services.AccountServices
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -16,6 +17,9 @@ class SettingsActivity : AppCompatActivity() {
                 .commit()
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        // TODO
+        // AccountServices.getAccount("com.thatcakeid.splum")
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {

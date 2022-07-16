@@ -1,70 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
-
-    <!-- <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="4dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#101415"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingStart="4dp">
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_lock"
-                app:tint="#4CAF50" />
-
-            <EditText
-                android:id="@+id/editTextTextPersonName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:ems="10"
-                android:hint="Enter an url or search..."
-                android:inputType="text|textUri"
-                android:padding="8dp"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:text="about:about" />
-        </LinearLayout>
-
-        <mozilla.components.ui.tabcounter.TabCounter
-            android:id="@+id/tabIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="6dp"
-            app:tabCounterTintColor="@color/white" />
-
-        <ImageView
-            android:id="@+id/moreIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="6dp"
-            android:layout_weight="0"
-            android:scaleType="centerInside"
-            app:srcCompat="@drawable/ic_more_vert" />
-
-    </LinearLayout>
-    -->
 
     <mozilla.components.browser.toolbar.BrowserToolbar
         android:id="@+id/toolBar"
@@ -74,7 +14,5 @@
     <org.mozilla.geckoview.GeckoView
         android:id="@+id/geckoview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-    </org.mozilla.geckoview.GeckoView>
+        android:layout_height="fill_parent" />
 </LinearLayout>
