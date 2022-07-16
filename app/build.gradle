@@ -11,7 +11,7 @@ android {
         minSdk 26
         targetSdk 32
         versionCode 1
-        versionName '1.5'
+        versionName '1.6'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,6 +38,16 @@ android {
     aaptOptions {
         cruncherEnabled = false
     }
+
+    splits {
+        abi {
+            enable true
+            reset()
+
+            include "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
+            universalApk false
+        }
+    }
 }
 
 dependencies {
@@ -51,11 +61,17 @@ dependencies {
     implementation 'org.mozilla.components:browser-errorpages:103.0.8'
     implementation 'org.mozilla.components:browser-tabstray:103.0.8'
     implementation 'org.mozilla.components:browser-toolbar:103.0.8'
-    implementation 'org.mozilla.components:feature-toolbar:103.0.8'
-    implementation 'org.mozilla.components:browser-menu:103.0.8'
-    implementation 'org.mozilla.components:concept-menu:103.0.8'
     implementation 'org.mozilla.components:browser-domains:103.0.8'
+    implementation 'org.mozilla.components:browser-state:103.0.8'
+    implementation 'org.mozilla.components:browser-menu:103.0.8'
+
+    implementation 'org.mozilla.components:feature-toolbar:103.0.8'
     implementation 'org.mozilla.components:feature-addons:103.0.8'
+    implementation 'org.mozilla.components:feature-tabs:103.0.8'
+
+    implementation 'org.mozilla.components:support-utils:103.0.8'
+    implementation 'org.mozilla.components:ui-tabcounter:103.0.8'
+    implementation 'org.mozilla.components:concept-menu:103.0.8'
 
     implementation 'androidx.preference:preference:1.2.0'
     implementation project(path: ':ThatCakeIDServices')

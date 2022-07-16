@@ -8,13 +8,30 @@
             android:key="sync"
             android:title="Sync" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Basics">
+    <PreferenceCategory android:title="Basic">
         <ListPreference
             android:entries="@array/search_engines"
             android:entryValues="@array/search_engines_values"
             android:key="search_engine"
             android:title="Search Engine"
             android:defaultValue="https://google.com/search?q=" />
+        <Preference
+            android:title="Passwords" />
+        <Preference
+            android:title="Privacy &amp; Security" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Advanced">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="home_page_enabled"
+            android:title="Home Page"
+            android:summaryOff="Off"
+            android:summaryOn="On" />
+        <Preference
+            android:title="Downloads" />
+        <Preference
+            android:title="Logs" />
     </PreferenceCategory>
     <PreferenceCategory android:title="About">
         <Preference

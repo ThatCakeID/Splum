@@ -1,21 +1,30 @@
 package com.thatcakeid.splum
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.provider.Browser
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
+import mozilla.components.browser.menu.BrowserMenu
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.toolbar.Toolbar
+import mozilla.components.feature.tabs.toolbar.TabCounterToolbarButton
+import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.feature.toolbar.WebExtensionToolbarFeature
+import mozilla.components.lib.state.Store
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.utils.URLStringUtils
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoSession.ContentDelegate
@@ -56,6 +65,10 @@ class MainActivity : AppCompatActivity() {
 
         session.contentDelegate = object : ContentDelegate {}
 
+        if (sRuntime == null) {
+            sRuntime = GeckoRuntime.create(this)
+        }
+
         toolBar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
 
         val backIc = BrowserMenuItemToolbar.Button(
@@ -83,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         val newTabItem          = BrowserMenuImageText("New Tab", R.drawable.ic_add) { /* Do nothing */ }
         val newTabIncognitoItem = BrowserMenuImageText("New Private Tab", R.drawable.ic_add) { /* Do nothing */ }
 
-        val extensionsItemIc = BrowserMenuImageText("Extensions", R.drawable.ic_extension) { /* Do nothing */ }
+        val extensionsItemIc    = BrowserMenuImageText("Extensions", R.drawable.ic_extension) { /* Do nothing */ }
 
         val historyItemIc       = BrowserMenuImageText("History", R.drawable.ic_history) { /* Do nothing */ }
         val downloadsItemIc     = BrowserMenuImageText("Downloads", R.drawable.ic_arrow_downward) { /* Do nothing */ }
@@ -99,7 +112,23 @@ class MainActivity : AppCompatActivity() {
             val shareIntent = Intent.createChooser(sendIntent, null)
             startActivity(shareIntent)
         }
-        val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View") { /* Do nothing */ }
+        val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", listener = { checked ->
+            val currentUrl: String = toolBar.url.toString()
+
+            if(checked) {
+                val newSession = GeckoSession(GeckoSessionSettings.Builder()
+                    .useTrackingProtection(false)
+                    .userAgentOverride("Mozilla/5.0 (Linux; X11; Linux x86_64; rv:10.0) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36")
+                    .build())
+
+                newSession.contentDelegate = object : ContentDelegate {}
+                geckoView.setSession(newSession)
+                newSession.loadUri(currentUrl)
+            } else {
+                geckoView.setSession(session)
+                session.loadUri(currentUrl)
+            }
+        })
 
         val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
             val si = Intent(this, SettingsActivity::class.java)
@@ -110,10 +139,6 @@ class MainActivity : AppCompatActivity() {
         val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem)
         toolBar.display.menuBuilder = BrowserMenuBuilder(items)
         toolBar.elevation = 8F
-
-        if (sRuntime == null) {
-            sRuntime = GeckoRuntime.create(this)
-        }
 
         session.open(sRuntime!!)
         geckoView.setSession(session)
@@ -132,6 +157,19 @@ class MainActivity : AppCompatActivity() {
 
             true
         }
+
+        toolBar.display.urlFormatter = { url ->
+            URLStringUtils.toDisplayUrl(url)
+        }
+
+        TabsToolbarFeature(
+            toolbar = toolBar,
+            store = BrowserStore(),
+            sessionId = "sess",
+            lifecycleOwner = this,
+            showTabs = ::showTabs,
+            countBasedOnSelectedTabType = false
+        )
 
         session.progressDelegate = object : ProgressDelegate {
             override fun onPageStart(session: GeckoSession, url: String) {
@@ -160,5 +198,13 @@ class MainActivity : AppCompatActivity() {
                 toolBar.url = url!!
             }
         }
+    }
+
+    override fun onBackPressed() {
+        finishAffinity()
+    }
+
+    private fun showTabs() {
+        Toast.makeText(this, "tAB!!!s", Toast.LENGTH_LONG)
     }
 }
