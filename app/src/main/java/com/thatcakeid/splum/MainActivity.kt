@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.preference.PreferenceManager
 import com.thatcakeid.splum.fragments.BrowserFragment
 
 
@@ -24,10 +25,17 @@ class MainActivity : AppCompatActivity() {
             }
 
         } else {
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+            val url: String = if(sharedPreferences.getBoolean("home_page_enabled", false))
+                "about:homepage"
+            else
+                "https://google.com/"
+
             if (savedInstanceState == null) {
                 supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.fragmentContainerView, BrowserFragment.newInstance("https://google.com/"), "browserFragment")
+                    .add(R.id.fragmentContainerView, BrowserFragment.newInstance(url), "browserFragment")
                     .commit()
             }
         }
