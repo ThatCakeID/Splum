@@ -28,7 +28,8 @@
 </h2>
 
 <p>
-  Currently you can find prebuilt APKs at https://cdn.theclashfruit.me/apps/splum/.
+  Currently you can find prebuilt APKs in my F-Droid repo. <br />
+  Repo Url: `https://cdn.theclashfruit.me/fdroid/repo/`.
 </p>
 
 <p>
