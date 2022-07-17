@@ -6,13 +6,10 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <mozilla.components.browser.toolbar.BrowserToolbar
-        android:id="@+id/toolBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
-    <org.mozilla.geckoview.GeckoView
-        android:id="@+id/geckoview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+    <LinearLayout
+        android:id="@+id/fragmentContainerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" />
 </LinearLayout>
