@@ -30,7 +30,9 @@
         <Preference android:title="Logs" />
     </PreferenceCategory>
     <PreferenceCategory android:title="About">
-        <Preference android:title="Licenses" />
+        <Preference
+            android:key="licensePref"
+            android:title="Licenses" />
 
         <Preference
             android:summary="Copyright (C) 2022 ThatCakeID"

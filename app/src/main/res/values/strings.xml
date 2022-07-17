@@ -9,4 +9,34 @@
 
     <string name="settings_advanced_title">Advanced</string>
     <!-- SETTINGS -->
+
+    <!-- OTHER -->
+    <string name="settings_licenses_full">
+        ====================================\n
+        = Android components\n
+        =\n
+        = Mozilla Public License 2.0\n
+        =\n
+        = Repository: https://github.com/mozilla-mobile/android-components\n
+        = License:    https://github.com/mozilla-mobile/android-components/blob/main/LICENSE\n
+        ====================================\n
+        \n
+        ====================================\n
+        = GeckoView\n
+        =\n
+        = Unknown\n
+        =\n
+        = Repository: https://searchfox.org/mozilla-central/source/mobile/android/geckoview\n
+        = License:    -\n
+        ====================================\n
+        \n
+        ====================================\n
+        = Splum\n
+        =\n
+        = GNU General Public License v3.0\n
+        =\n
+        = Repository: https://github.com/ThatCakeID/Splum\n
+        = License:    https://github.com/ThatCakeID/Splum/blob/master/LICENSE\n
+        ====================================
+    </string>
 </resources>
