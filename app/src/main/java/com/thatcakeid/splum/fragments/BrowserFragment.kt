@@ -2,14 +2,14 @@ package com.thatcakeid.splum.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
-import com.thatcakeid.splum.SettingsActivity
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -173,6 +173,8 @@ class BrowserFragment : Fragment() {
             })
 
             val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
+                (activity as MainActivity?)!!.setCurrentFragmentVar("settings")
+
                 requireActivity()
                     .supportFragmentManager
                     .beginTransaction()

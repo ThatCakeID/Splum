@@ -12,6 +12,7 @@
         <item name="colorOnBackground">@color/colorPrimary</item>
 
         <item name="materialAlertDialogTheme">@style/Theme.Splum.DialogTheme</item>
+        <item name="alertDialogTheme">@style/Theme.Splum.DialogTheme</item>
 
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
     </style>
