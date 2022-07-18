@@ -101,7 +101,7 @@ class BrowserFragment : Fragment() {
                 session: GeckoSession,
                 securityInfo: GeckoSession.ProgressDelegate.SecurityInformation
             ) {
-                if(securityInfo.isSecure)
+                if (securityInfo.isSecure)
                     toolBar.siteSecure = Toolbar.SiteSecurity.SECURE
                 else
                     toolBar.siteSecure = Toolbar.SiteSecurity.INSECURE
@@ -162,7 +162,7 @@ class BrowserFragment : Fragment() {
             val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", listener = { checked ->
                 val currentUrl: String = toolBar.url.toString()
 
-                if(checked) {
+                if (checked) {
                     val newSession = GeckoSession(GeckoSessionSettings.Builder()
                         .useTrackingProtection(false)
                         .userAgentOverride("Mozilla/5.0 (Linux; X11; Linux x86_64; rv:10.0) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36")

@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(intent?.action == Intent.ACTION_VIEW) {
+        if (intent?.action == Intent.ACTION_VIEW) {
             if (savedInstanceState == null) {
                 supportFragmentManager
                     .beginTransaction()
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         } else {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            val url: String = if(sharedPreferences.getBoolean("home_page_enabled", false))
+            val url: String = if (sharedPreferences.getBoolean("home_page_enabled", false))
                 "about:homepage"
             else
                 "https://google.com/"
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(currentFragment == "browser")
+        if (currentFragment == "browser")
             finishAffinity()
         else {
             currentFragment = "browser"
