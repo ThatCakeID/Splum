@@ -197,7 +197,6 @@ class BrowserFragment : Fragment() {
 
                 true
             }
-
             toolBar.display.urlFormatter = { url ->
                 URLStringUtils.toDisplayUrl(url)
             }
@@ -211,8 +210,8 @@ class BrowserFragment : Fragment() {
                 countBasedOnSelectedTabType = false
             )
         }
-        setupToolBar()
 
+        setupToolBar()
         return layout
     }
 
