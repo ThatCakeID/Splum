@@ -39,7 +39,7 @@ class BrowserFragment : Fragment() {
 
     private val webExtToolbarFeature = ViewBoundFeatureWrapper<WebExtensionToolbarFeature>()
 
-    private var openUrl: String? = null;
+    private var openUrl: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +52,7 @@ class BrowserFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val layout: View = inflater.inflate(R.layout.fragment_browser, container, false)
 
         val geckoView = layout.findViewById<GeckoView>(R.id.geckoview)
