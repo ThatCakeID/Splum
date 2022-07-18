@@ -53,6 +53,8 @@ class BrowserFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
+
         val layout: View = inflater.inflate(R.layout.fragment_browser, container, false)
 
         val geckoView = layout.findViewById<GeckoView>(R.id.geckoview)
