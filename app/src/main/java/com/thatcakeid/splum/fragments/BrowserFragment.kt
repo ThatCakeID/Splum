@@ -227,7 +227,7 @@ class BrowserFragment : Fragment() {
                         if (canGoBack)
                             session.goBack()
                         else
-                            requireActivity().finishAffinity()
+                            requireActivity().finish()
                     }
                 })
         }
