@@ -41,29 +41,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (currentFragment == "browser")
-            finishAffinity()
-        else {
-            currentFragment = "browser"
-
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            val url: String = if (sharedPreferences.getBoolean("home_page_enabled", false))
-                "about:homepage"
-            else
-                "https://google.com/"
-
-            supportFragmentManager
-                .beginTransaction()
-                .add(
-                    R.id.fragmentContainerView,
-                    BrowserFragment.newInstance(url),
-                    "browserFragment"
-                )
-                .commit()
-        }
-    }
-
     fun setCurrentFragmentVar(fragmentName: String) {
         this.currentFragment = fragmentName
     }

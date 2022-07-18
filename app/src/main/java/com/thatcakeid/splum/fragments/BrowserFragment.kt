@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.thatcakeid.splum.MainActivity
@@ -38,6 +39,9 @@ class BrowserFragment : Fragment() {
     private val customDomainsProvider = CustomDomainsProvider()
 
     private val webExtToolbarFeature = ViewBoundFeatureWrapper<WebExtensionToolbarFeature>()
+
+    private var canGoBack = false
+    private var canGoForward = false
 
     private var openUrl: String? = null
 
@@ -110,6 +114,14 @@ class BrowserFragment : Fragment() {
             }
         }
         session.navigationDelegate = object : GeckoSession.NavigationDelegate {
+            override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) {
+                this@BrowserFragment.canGoBack = canGoBack
+            }
+
+            override fun onCanGoForward(session: GeckoSession, canGoForward: Boolean) {
+                this@BrowserFragment.canGoForward = canGoForward
+            }
+
             override fun onLocationChange(session: GeckoSession, url: String?) {
                 toolBar.url = url!!
             }
@@ -123,10 +135,12 @@ class BrowserFragment : Fragment() {
                 "Back",
                 isEnabled = { true }
             ) {
+                if (!canGoBack) return@Button
                 session.goBack()
             }
 
             val forwardIc = BrowserMenuItemToolbar.Button(R.drawable.ic_arrow_forward, "Forward") {
+                if (!canGoForward) return@Button
                 session.goForward()
             }
 
@@ -210,8 +224,21 @@ class BrowserFragment : Fragment() {
                 countBasedOnSelectedTabType = false
             )
         }
+        fun registerBackPressed() {
+            requireActivity()
+                .onBackPressedDispatcher
+                .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        if (canGoBack)
+                            session.goBack()
+                        else
+                            requireActivity().finishAffinity()
+                    }
+                })
+        }
 
         setupToolBar()
+        registerBackPressed()
         return layout
     }
 
