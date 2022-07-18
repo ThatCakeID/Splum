@@ -8,7 +8,7 @@ import com.thatcakeid.splum.fragments.BrowserFragment
 
 
 class MainActivity : AppCompatActivity() {
-    public var currentFragment = "browser"
+    var currentFragment = "browser"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
