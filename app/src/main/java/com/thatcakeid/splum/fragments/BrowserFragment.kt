@@ -215,7 +215,7 @@ class BrowserFragment : Fragment() {
     }
 
     private fun showTabs() {
-        Toast.makeText(requireActivity().applicationContext, "tAB!!!s", Toast.LENGTH_LONG)
+        Toast.makeText(requireActivity().applicationContext, "tAB!!!s", Toast.LENGTH_LONG).show()
     }
 
     companion object {
