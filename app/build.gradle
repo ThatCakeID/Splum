@@ -74,7 +74,7 @@ dependencies {
     implementation 'org.mozilla.components:concept-menu:103.0.8'
 
     implementation 'androidx.preference:preference:1.2.0'
-    implementation project(path: ':ThatCakeIDServices')
+    implementation project(path: ':TCIDServices')
 
     testImplementation 'junit:junit:4.13.2'
 

@@ -10,7 +10,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/ThatCakeIDServices" />
+            <option value="$PROJECT_DIR$/TCIDServices" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
