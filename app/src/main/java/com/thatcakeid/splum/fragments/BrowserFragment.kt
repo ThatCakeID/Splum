@@ -66,9 +66,12 @@ class BrowserFragment : Fragment() {
             this.addDomainProvider(customDomainsProvider)
         }
 
+        val osBuildRelease = android.os.Build.VERSION.RELEASE.toString()
+        val osBuildModel = android.os.Build.MODEL
+
         val settings = GeckoSessionSettings.Builder()
             .useTrackingProtection(false)
-            .userAgentOverride("Mozilla/5.0 (Linux; Android " + android.os.Build.VERSION.RELEASE.toString() + "; " + android.os.Build.MODEL + ") AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36")
+            .userAgentOverride("Mozilla/5.0 (Linux; Android " + osBuildRelease + "; " + osBuildModel + ") AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36")
             .build()
 
         val session = GeckoSession(settings)
