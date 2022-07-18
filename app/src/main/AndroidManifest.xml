@@ -46,6 +46,11 @@
                 <data android:scheme="https" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|locale|layoutDirection|smallestScreenSize|screenLayout"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

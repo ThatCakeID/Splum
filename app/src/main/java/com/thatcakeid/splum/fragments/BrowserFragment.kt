@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
+import com.thatcakeid.splum.SettingsActivity
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -192,13 +193,7 @@ class BrowserFragment : Fragment() {
             })
 
             val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
-                (activity as MainActivity?)!!.setCurrentFragmentVar("settings")
-
-                requireActivity()
-                    .supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragmentContainerView, SettingsFragment(), "settingsFragment")
-                    .commit()
+                (activity as MainActivity?)!!.switchActivity(SettingsActivity::class.java)
             }
 
             val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem)

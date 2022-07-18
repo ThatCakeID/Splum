@@ -1,5 +1,6 @@
 package com.thatcakeid.splum
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +40,10 @@ class MainActivity : AppCompatActivity() {
                     .commit()
             }
         }
+    }
+
+    fun switchActivity(activity: Class<*>) {
+        startActivity(Intent(this@MainActivity, activity))
     }
 
     fun setCurrentFragmentVar(fragmentName: String) {
