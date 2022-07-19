@@ -243,7 +243,7 @@ class BrowserFragment : Fragment() {
                 primaryContentDescription = "Reload",
                 secondaryImageResource = R.drawable.ic_close,
                 secondaryContentDescription = "Stop Reload",
-                isInPrimaryState = { isLoading },
+                isInPrimaryState = { !isLoading },
                 listener = {
                     if (isLoading)
                         session.stopLoading()
