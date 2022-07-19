@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Splum</string>
+    <string name="app_name" translatable="false">Splum</string>
 
     <!-- SETTINGS -->
-    <string name="settings_basic_title">Basic</string>
+    <string name="settings_general_title">General</string>
     <string name="settings_search_engine">Search Engine</string>
     <string name="settings_passwords">Passwords</string>
     <string name="settings_privacy"><![CDATA[Privacy & Security]]></string>
@@ -39,4 +39,14 @@
         = License:    https://github.com/ThatCakeID/Splum/blob/master/LICENSE\n
         ====================================
     </string>
+    <string name="settings_home_page">Homepage</string>
+    <string name="settings_account_name">John Doe</string>
+    <string name="settings_account_email">johndoe@thatcakeid.com</string>
+    <string name="settings_manage_account">Manage account</string>
+    <string name="settings_download_opts">Download options</string>
+    <string name="settings_logs">Logs</string>
+    <string name="settings_about_title">About</string>
+    <string name="settings_licenses">Licenses</string>
+    <string name="settings_copyright">Copyright</string>
+    <string name="settings_copyright_summary" translatable="false">Copyright (C) 2022 ThatCakeID</string>
 </resources>
