@@ -10,9 +10,9 @@ import com.thatcakeid.splum.R
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
-        val licensePref = findPreference<Preference>("license_pref")
+        val pref = findPreference<Preference>("licensePref")
 
-        licensePref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        pref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Licenses")
                 .setMessage(resources.getString(R.string.settings_licenses_full))
