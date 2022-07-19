@@ -30,7 +30,7 @@
 
 <p>
   Currently you can find prebuilt APKs in my F-Droid repo. <br />
-  Repo Url: <pre>https://cdn.theclashfruit.me/fdroid/repo/</pre>.
+  Repo Url: <code>https://cdn.theclashfruit.me/fdroid/repo/</code>.
 </p>
 
 <p>
