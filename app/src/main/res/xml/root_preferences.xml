@@ -1,14 +1,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="ThatCakeID Account">
+    <PreferenceCategory android:title="Account">
         <Preference
-            android:summary="${email}"
-            android:title="${username}" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="sync"
-            android:title="Sync" />
+            android:summary="@string/settings_account_email"
+            android:title="@string/settings_account_name" />
+        <Preference android:title="@string/settings_manage_account" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings_basic_title">
+    <PreferenceCategory android:title="@string/settings_general_title">
         <ListPreference
             android:defaultValue="https://google.com/search?q="
             android:entries="@array/search_engines"
@@ -19,23 +16,16 @@
         <Preference android:title="@string/settings_privacy" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_advanced_title">
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="home_page_enabled"
-            android:summaryOff="Off"
-            android:summaryOn="On"
-            android:title="Home Page" />
-        <Preference android:title="Downloads" />
-        <Preference android:title="Logs" />
+        <Preference android:title="@string/settings_home_page" />
+        <Preference android:title="@string/settings_download_opts" />
+        <Preference android:title="@string/settings_logs" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="About">
+    <PreferenceCategory android:title="@string/settings_about_title">
         <Preference
-            android:key="licensePref"
-            android:title="Licenses" />
-
+            android:key="license_pref"
+            android:title="@string/settings_licenses" />
         <Preference
-            android:summary="Copyright (C) 2022 ThatCakeID"
-            android:title="Copyright" />
+            android:summary="@string/settings_copyright_summary"
+            android:title="@string/settings_copyright" />
     </PreferenceCategory>
 </PreferenceScreen>
