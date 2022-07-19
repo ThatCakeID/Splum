@@ -3,6 +3,7 @@
 </h1>
 
 <p align="center">
+  <img alt="GitHub Workflow Status" src="https://github.com/ThatCakeID/Splum/actions/workflows/android.yml/badge.svg">
   <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/ThatCakeID/Splum?label=issues">
   <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/ThatCakeID/Splum">
   <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/ThatCakeID/Splum/total">
