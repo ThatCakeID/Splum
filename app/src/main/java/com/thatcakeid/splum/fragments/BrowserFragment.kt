@@ -1,12 +1,21 @@
 package com.thatcakeid.splum.fragments
 
+import android.app.Notification
+import android.app.NotificationManager
 import android.content.Intent
+import android.content.res.Resources
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompatSideChannelService
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -14,6 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
 import com.thatcakeid.splum.classes.MainRequestInterceptor
+import mozilla.components.browser.domains.CustomDomains
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.engine.gecko.GeckoEngineSession
@@ -23,25 +33,36 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
+import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.tabstray.TabViewHolder
+import mozilla.components.browser.tabstray.TabsTray
+import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.EngineView
+import mozilla.components.concept.engine.manifest.WebAppManifest
+import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.fetch.Response.Companion.SUCCESS
 import mozilla.components.concept.toolbar.Toolbar
+import mozilla.components.feature.downloads.DownloadsFeature
+import mozilla.components.feature.downloads.DownloadsUseCases
+import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.feature.toolbar.WebExtensionToolbarFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.utils.URLStringUtils
+import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.geckoview.*
 
 class BrowserFragment : Fragment() {
     private val shippedDomainsProvider = ShippedDomainsProvider()
-    private val customDomainsProvider = CustomDomainsProvider()
+    private val customDomainsProvider  = CustomDomainsProvider()
 
     private val webExtToolbarFeature = ViewBoundFeatureWrapper<WebExtensionToolbarFeature>()
 
@@ -51,6 +72,8 @@ class BrowserFragment : Fragment() {
     private var openUrl: String? = null
     private var sRuntime: GeckoRuntime? = null
 
+    private var browserStore: BrowserStore = BrowserStore()
+    private var mediaNotif: Notification? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +95,12 @@ class BrowserFragment : Fragment() {
         val geckoView = layout.findViewById<GeckoEngineView>(R.id.geckoview)
         val toolBar   = layout.findViewById<BrowserToolbar>(R.id.toolBar)
 
+        val customAutoCompleteDomains = resources.getStringArray(R.array.search_engines)
+
+        customAutoCompleteDomains.forEach { it ->
+            CustomDomains.add(requireContext(), it)
+        }
+
         shippedDomainsProvider.initialize(requireActivity().applicationContext)
         customDomainsProvider.initialize(requireActivity().applicationContext)
 
@@ -89,11 +118,6 @@ class BrowserFragment : Fragment() {
             allowContentAccess = true
             allowFileAccess = true
         }
-
-            /*.useTrackingProtection(false)
-            .userAgentOverride("Mozilla/5.0 (Linux; Android $osBuildRelease; $osBuildModel) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36")
-            .build()
-             */
 
         val session = GeckoEngineSession(sRuntime!!, defaultSettings = settings, openGeckoSession = true)
 
@@ -120,51 +144,56 @@ class BrowserFragment : Fragment() {
                 super.onSecurityChange(secure, host, issuer)
             }
 
-            override fun onTitleChange(title: String) {
-                toolBar.title = title
+            override fun onMediaFullscreenChanged(
+                fullscreen: Boolean,
+                elementMetadata: MediaSession.ElementMetadata?
+            ) {
+                if(fullscreen) {
+                    toolBar.visibility = GONE
+                    requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                } else {
+                    toolBar.visibility = VISIBLE
+                    requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+                }
 
-                super.onTitleChange(title)
+                super.onMediaFullscreenChanged(fullscreen, elementMetadata)
             }
 
+            override fun onNavigationStateChange(canGoBack: Boolean?, canGoForward: Boolean?) {
+                if(canGoBack == null) this@BrowserFragment.canGoBack = false
+                else this@BrowserFragment.canGoBack = canGoBack
 
+                if(canGoForward == null) this@BrowserFragment.canGoBack = false
+                else this@BrowserFragment.canGoForward = canGoForward
+
+                super.onNavigationStateChange(canGoBack, canGoForward)
+            }
+
+            override fun onMediaActivated(mediaSessionController: MediaSession.Controller) {
+                mediaNotif = Notification.Builder(requireContext(), "mediaChannelSplum")
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentTitle("Track title")
+                    .setContentText("Artist - Album")
+                    .setStyle(
+                        Notification.MediaStyle().setMediaSession(mediaSessionController as android.media.session.MediaSession.Token)
+                    )
+                    .build()
+
+                super.onMediaActivated(mediaSessionController)
+            }
+
+            override fun onMediaMetadataChanged(metadata: MediaSession.Metadata) {
+
+
+                super.onMediaMetadataChanged(metadata)
+            }
         })
 
+        DownloadsFeature(requireContext(), store = browserStore, useCases = DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
+
         /*
-        session.progressDelegate   = object : GeckoSession.ProgressDelegate {
-            override fun onPageStart(session: GeckoSession, url: String) {
-                toolBar.url = url
-            }
-
-            override fun onProgressChange(session: GeckoSession, progress: Int) {
-                toolBar.displayProgress(progress)
-            }
-
-            override fun onSecurityChange(
-                session: GeckoSession,
-                securityInfo: GeckoSession.ProgressDelegate.SecurityInformation
-            ) {
-                if (securityInfo.isSecure)
-                    toolBar.siteSecure = Toolbar.SiteSecurity.SECURE
-                else
-                    toolBar.siteSecure = Toolbar.SiteSecurity.INSECURE
-
-                super.onSecurityChange(session, securityInfo)
-            }
-        }
-
-        session.navigationDelegate = object : GeckoSession.NavigationDelegate {
-            override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) {
-                this@BrowserFragment.canGoBack = canGoBack
-            }
-
-            override fun onCanGoForward(session: GeckoSession, canGoForward: Boolean) {
-                this@BrowserFragment.canGoForward = canGoForward
-            }
-
-            override fun onLocationChange(session: GeckoSession, url: String?) {
-                toolBar.url = url!!
-            }
-        }
 
         session.promptDelegate = object : GeckoSession.PromptDelegate {
             override fun onAlertPrompt(
@@ -298,17 +327,21 @@ class BrowserFragment : Fragment() {
 
                 true
             }
+
             toolBar.display.urlFormatter = { url ->
                 URLStringUtils.toDisplayUrl(url)
             }
 
             TabsToolbarFeature(
                 toolbar = toolBar,
-                store = BrowserStore(),
+                store = browserStore,
                 sessionId = "sess",
                 lifecycleOwner = this,
                 showTabs = ::showTabs,
-                countBasedOnSelectedTabType = false
+                countBasedOnSelectedTabType = false,
+                tabCounterMenu = TabCounterMenu(requireContext(), iconColor = 0xFFFFFF, onItemTapped = {
+                    Toast.makeText(requireActivity().applicationContext, "tAB!!!s 2", Toast.LENGTH_LONG).show()
+                })
             )
         }
 
