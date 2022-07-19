@@ -5,9 +5,12 @@
       <map>
         <entry key="..\:/Users/Gian/Documents/Splum/app/src/main/res/drawable-xxhdpi/ic_exit.xml" value="0.197" />
         <entry key="..\:/Users/Gian/Documents/Splum/app/src/main/res/drawable/ic_arrow_downward.xml" value="0.197" />
+        <entry key="..\:/Users/Gian/Documents/Splum/app/src/main/res/layout/activity_downloads.xml" value="0.25" />
         <entry key="..\:/Users/Gian/Documents/Splum/app/src/main/res/layout/activity_main.xml" value="0.15760869565217392" />
         <entry key="..\:/Users/Gian/Documents/Splum/app/src/main/res/layout/activity_settings.xml" value="0.15760869565217392" />
-        <entry key="..\:/Users/Gian/Documents/Splum/app/src/main/res/xml/root_preferences.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Gian/Documents/Splum/app/src/main/res/layout/fragment_browser.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Gian/Documents/Splum/app/src/main/res/layout/fragment_downloads.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Gian/Documents/Splum/app/src/main/res/xml/root_preferences.xml" value="0.33" />
         <entry key="..\:/Users/TheClashFruit/AndroidStudioProjects/Splum/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.332" />
         <entry key="..\:/Users/TheClashFruit/AndroidStudioProjects/Splum/app/src/main/res/drawable/ic_launcher_background.xml" value="0.332" />
         <entry key="..\:/Users/TheClashFruit/AndroidStudioProjects/Splum/app/src/main/res/drawable/ic_main.xml" value="0.1985" />
@@ -19,7 +22,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17_PREVIEW" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
