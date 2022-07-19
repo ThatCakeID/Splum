@@ -6,7 +6,7 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="sync"
-            android:title="Sync" />
+            android:title="@string/settings_sync" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_basic_title">
         <ListPreference

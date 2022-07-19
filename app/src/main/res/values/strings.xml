@@ -2,6 +2,8 @@
     <string name="app_name">Splum</string>
 
     <!-- SETTINGS -->
+    <string name="settings_sync">Sync</string>
+
     <string name="settings_basic_title">Basic</string>
     <string name="settings_search_engine">Search Engine</string>
     <string name="settings_passwords">Passwords</string>
