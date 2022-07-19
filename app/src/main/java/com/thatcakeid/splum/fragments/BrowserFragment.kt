@@ -175,21 +175,9 @@ class BrowserFragment : Fragment() {
                 startActivity(shareIntent)
             }
             val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", listener = { checked ->
-                val currentUrl: String = toolBar.url.toString()
-
-                if (checked) {
-                    val newSession = GeckoSession(GeckoSessionSettings.Builder()
-                        .useTrackingProtection(false)
-                        .userAgentOverride("Mozilla/5.0 (Linux; X11; Linux x86_64; rv:10.0) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36")
-                        .build())
-
-                    newSession.contentDelegate = object : GeckoSession.ContentDelegate {}
-                    geckoView.setSession(newSession)
-                    newSession.loadUri(currentUrl)
-                } else {
-                    geckoView.setSession(session)
-                    session.loadUri(currentUrl)
-                }
+                if (checked) session.settings.userAgentOverride = "Mozilla/5.0 (Linux; X11; Linux x86_64; rv:10.0) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
+                else session.settings.userAgentOverride = "Mozilla/5.0 (Linux; Android $osBuildRelease; $osBuildModel) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
+                session.reload()
             })
 
             val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
