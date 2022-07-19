@@ -2,16 +2,17 @@ package com.thatcakeid.splum.fragments
 
 import android.app.Notification
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
@@ -130,14 +131,22 @@ class BrowserFragment : Fragment() {
                 fullscreen: Boolean,
                 elementMetadata: MediaSession.ElementMetadata?
             ) {
-                if(fullscreen) {
-                    toolBar.visibility = GONE
-                    requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                val window = requireActivity().window
+                val winDecorView = window.decorView
+
+                val windowInsetsController =
+                    WindowCompat.getInsetsController(window, winDecorView)
+                windowInsetsController.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+                if (fullscreen) {
+                    toolBar.visibility = View.GONE
+                    windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+                    requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 } else {
-                    toolBar.visibility = VISIBLE
-                    requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+                    toolBar.visibility = View.VISIBLE
+                    windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+                    requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                 }
 
                 super.onMediaFullscreenChanged(fullscreen, elementMetadata)
