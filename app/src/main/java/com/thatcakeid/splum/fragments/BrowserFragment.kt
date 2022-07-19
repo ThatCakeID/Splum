@@ -30,11 +30,10 @@ import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoSessionSettings
 import org.mozilla.geckoview.GeckoView
+import java.io.Serializable
 
 
 class BrowserFragment : Fragment() {
-    private var sRuntime: GeckoRuntime? = null
-
     private val shippedDomainsProvider = ShippedDomainsProvider()
     private val customDomainsProvider = CustomDomainsProvider()
 
@@ -44,12 +43,15 @@ class BrowserFragment : Fragment() {
     private var canGoForward = false
 
     private var openUrl: String? = null
+    private var sRuntime: GeckoRuntime? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
             openUrl = it.getString("openUrl")
+            sRuntime = it.getParcelable("sRuntime") as GeckoRuntime?
         }
     }
 
@@ -83,9 +85,6 @@ class BrowserFragment : Fragment() {
         val session = GeckoSession(settings)
             session.contentDelegate = object : GeckoSession.ContentDelegate {}
 
-        if (sRuntime == null)
-            sRuntime = GeckoRuntime.create(requireActivity().applicationContext)
-
         session.open(sRuntime!!)
         geckoView.setSession(session)
 
@@ -113,6 +112,7 @@ class BrowserFragment : Fragment() {
                 super.onSecurityChange(session, securityInfo)
             }
         }
+
         session.navigationDelegate = object : GeckoSession.NavigationDelegate {
             override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) {
                 this@BrowserFragment.canGoBack = canGoBack
@@ -174,8 +174,13 @@ class BrowserFragment : Fragment() {
                 startActivity(shareIntent)
             }
             val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", listener = { checked ->
-                if (checked) session.settings.userAgentOverride = "Mozilla/5.0 (Linux; X11; Linux x86_64; rv:10.0) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
-                else session.settings.userAgentOverride = "Mozilla/5.0 (Linux; Android $osBuildRelease; $osBuildModel) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
+                if (checked)
+                    session.settings.userAgentOverride =
+                        "Mozilla/5.0 (Linux; X11; Linux x86_64; rv:10.0) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
+                else
+                    session.settings.userAgentOverride =
+                        "Mozilla/5.0 (Linux; Android $osBuildRelease; $osBuildModel) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
+
                 session.reload()
             })
 
@@ -185,6 +190,7 @@ class BrowserFragment : Fragment() {
                 requireActivity()
                     .supportFragmentManager
                     .beginTransaction()
+                    .addToBackStack("settingsFragment")
                     .replace(R.id.fragmentContainerView, SettingsFragment(), "settingsFragment")
                     .commit()
             }
@@ -195,6 +201,13 @@ class BrowserFragment : Fragment() {
 
             val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem, exitItem)
             toolBar.display.menuBuilder = BrowserMenuBuilder(items)
+
+            toolBar.display.hint = "Enter an URL or search"
+            toolBar.edit.hint = "Enter an URL or search"
+            toolBar.display.colors.copy(
+                securityIconSecure = R.drawable.ic_lock,
+                securityIconInsecure = R.drawable.ic_lock_open
+            )
             toolBar.elevation = 8F
 
             toolBar.setOnUrlCommitListener { url ->
@@ -216,6 +229,7 @@ class BrowserFragment : Fragment() {
                 countBasedOnSelectedTabType = false
             )
         }
+
         fun registerBackPressed() {
             requireActivity()
                 .onBackPressedDispatcher
@@ -231,6 +245,7 @@ class BrowserFragment : Fragment() {
 
         setupToolBar()
         registerBackPressed()
+
         return layout
     }
 
@@ -239,10 +254,11 @@ class BrowserFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(openUrl: String) =
+        fun newInstance(openUrl: String, sRuntime: GeckoRuntime?) =
             BrowserFragment().apply {
                 arguments = Bundle().apply {
                     putString("openUrl", openUrl)
+                    putParcelable("sRuntime", sRuntime)
                 }
             }
     }
