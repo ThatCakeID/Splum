@@ -138,13 +138,9 @@ class BrowserFragment : Fragment() {
         session.loadUrl(openUrl.toString())
 
         session.register(object : EngineSession.Observer {
-            override fun onLocationChange(url: String) {
-                toolBar.url = url
-            }
-
-            override fun onProgress(progress: Int) {
-                toolBar.displayProgress(progress)
-            }
+            override fun onLocationChange(url: String) { toolBar.url = url }
+            override fun onProgress(progress: Int) { toolBar.displayProgress(progress) }
+            override fun onLoadingStateChange(loading: Boolean) { isLoading = loading }
 
             override fun onSecurityChange(secure: Boolean, host: String?, issuer: String?) {
                 if (secure)
@@ -189,18 +185,6 @@ class BrowserFragment : Fragment() {
                 else this@BrowserFragment.canGoForward = canGoForward
 
                 super.onNavigationStateChange(canGoBack, canGoForward)
-            }
-
-            override fun onAppPermissionRequest(permissionRequest: PermissionRequest) {
-
-
-                super.onAppPermissionRequest(permissionRequest)
-            }
-
-            override fun onLoadingStateChange(loading: Boolean) {
-                isLoading = loading
-
-                super.onLoadingStateChange(loading)
             }
         })
 
