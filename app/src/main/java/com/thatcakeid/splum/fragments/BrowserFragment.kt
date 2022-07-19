@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.content.Intent
 import android.content.res.Resources
+import android.media.session.MediaSession.Token
 import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,7 +17,13 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompatSideChannelService
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowCompat.getInsetsController
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -46,6 +53,7 @@ import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.mediasession.MediaSession
+import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.fetch.Response.Companion.SUCCESS
 import mozilla.components.concept.toolbar.Toolbar
@@ -68,6 +76,9 @@ class BrowserFragment : Fragment() {
 
     private var canGoBack = false
     private var canGoForward = false
+
+    private var isLoading = false
+    private var isDesktop = false
 
     private var openUrl: String? = null
     private var sRuntime: GeckoRuntime? = null
@@ -150,12 +161,21 @@ class BrowserFragment : Fragment() {
             ) {
                 if(fullscreen) {
                     toolBar.visibility = GONE
-                    requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+                    val windowInsetsController =
+                        getInsetsController(requireActivity().window, requireActivity().window.decorView)
+
+                    windowInsetsController.systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+                    windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
                 } else {
                     toolBar.visibility = VISIBLE
-                    requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-                        WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+
+                    val windowInsetsController =
+                        getInsetsController(requireActivity().window, requireActivity().window.decorView)
+
+                    windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
                 }
 
                 super.onMediaFullscreenChanged(fullscreen, elementMetadata)
@@ -171,23 +191,16 @@ class BrowserFragment : Fragment() {
                 super.onNavigationStateChange(canGoBack, canGoForward)
             }
 
-            override fun onMediaActivated(mediaSessionController: MediaSession.Controller) {
-                mediaNotif = Notification.Builder(requireContext(), "mediaChannelSplum")
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setContentTitle("Track title")
-                    .setContentText("Artist - Album")
-                    .setStyle(
-                        Notification.MediaStyle().setMediaSession(mediaSessionController as android.media.session.MediaSession.Token)
-                    )
-                    .build()
+            override fun onAppPermissionRequest(permissionRequest: PermissionRequest) {
 
-                super.onMediaActivated(mediaSessionController)
+
+                super.onAppPermissionRequest(permissionRequest)
             }
 
-            override fun onMediaMetadataChanged(metadata: MediaSession.Metadata) {
+            override fun onLoadingStateChange(loading: Boolean) {
+                isLoading = loading
 
-
-                super.onMediaMetadataChanged(metadata)
+                super.onLoadingStateChange(loading)
             }
         })
 
@@ -264,10 +277,18 @@ class BrowserFragment : Fragment() {
                 session.goForward()
             }
 
-            val reloadIc = BrowserMenuItemToolbar.Button(R.drawable.ic_refresh, "Reload") {
-                session.reload()
-            }
-
+            val reloadIc = BrowserMenuItemToolbar.TwoStateButton(
+                primaryImageResource = R.drawable.ic_refresh,
+                primaryContentDescription = "Reload",
+                secondaryImageResource = R.drawable.ic_close,
+                secondaryContentDescription = "Stop Reload",
+                isInPrimaryState = { isLoading },
+                listener = {
+                    if(isLoading)
+                        session.stopLoading()
+                    else
+                        session.reload()
+                })
             val bookmarkIc = BrowserMenuItemToolbar.Button(R.drawable.ic_bookmark_border, "Bookmark") {
 
             }
@@ -293,7 +314,8 @@ class BrowserFragment : Fragment() {
                 val shareIntent = Intent.createChooser(sendIntent, null)
                 startActivity(shareIntent)
             }
-            val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", initialState = { false }, listener = { checked ->
+            val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", initialState = { isDesktop }, listener = { checked ->
+                isDesktop = checked
                 session.toggleDesktopMode(checked, true)
 
                 return@BrowserMenuImageSwitch
