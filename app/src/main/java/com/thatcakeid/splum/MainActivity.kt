@@ -41,10 +41,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun switchActivity(activity: Class<*>) {
-        startActivity(Intent(this@MainActivity, activity))
-    }
-
     fun setCurrentFragmentVar(fragmentName: String) {
         this.currentFragment = fragmentName
     }
