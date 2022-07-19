@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
@@ -20,18 +22,14 @@ import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.fetch.Response.Companion.SUCCESS
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.feature.toolbar.WebExtensionToolbarFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.utils.URLStringUtils
-import org.mozilla.geckoview.GeckoRuntime
-import org.mozilla.geckoview.GeckoSession
-import org.mozilla.geckoview.GeckoSessionSettings
-import org.mozilla.geckoview.GeckoView
-import java.io.Serializable
-
+import org.mozilla.geckoview.*
 
 class BrowserFragment : Fragment() {
     private val shippedDomainsProvider = ShippedDomainsProvider()
@@ -127,6 +125,57 @@ class BrowserFragment : Fragment() {
             }
         }
 
+        session.promptDelegate = object : GeckoSession.PromptDelegate {
+            override fun onAlertPrompt(
+                session: GeckoSession,
+                prompt: GeckoSession.PromptDelegate.AlertPrompt
+            ): GeckoResult<GeckoSession.PromptDelegate.PromptResponse>? {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Message from ${toolBar.url}.")
+                    .setMessage(prompt.message)
+                    .setPositiveButton("Ok") { _, _ -> prompt.dismiss() }
+                    .show()
+
+                return super.onAlertPrompt(session, prompt)
+            }
+
+            override fun onSharePrompt(
+                session: GeckoSession,
+                prompt: GeckoSession.PromptDelegate.SharePrompt
+            ): GeckoResult<GeckoSession.PromptDelegate.PromptResponse>? {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, prompt.text)
+                    type = "text/plain"
+                }
+
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                startActivity(shareIntent)
+                prompt.confirm(SUCCESS)
+
+                return super.onSharePrompt(session, prompt)
+            }
+
+            override fun onDateTimePrompt(
+                session: GeckoSession,
+                prompt: GeckoSession.PromptDelegate.DateTimePrompt
+            ): GeckoResult<GeckoSession.PromptDelegate.PromptResponse>? {
+                val datePicker =
+                    MaterialDatePicker.Builder.datePicker()
+                        .setTitleText("Select date")
+                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                        .build()
+
+                datePicker.addOnPositiveButtonClickListener {
+                    prompt.confirm(datePicker.selection.toString())
+                }
+
+                datePicker.show(requireActivity().supportFragmentManager, "datePick")
+
+                return super.onDateTimePrompt(session, prompt)
+            }
+        }
+
         fun setupToolBar() {
             toolBar.setBackgroundColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimary))
 
@@ -173,7 +222,7 @@ class BrowserFragment : Fragment() {
                 val shareIntent = Intent.createChooser(sendIntent, null)
                 startActivity(shareIntent)
             }
-            val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", listener = { checked ->
+            val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", initialState = { false }, listener = { checked ->
                 if (checked)
                     session.settings.userAgentOverride =
                         "Mozilla/5.0 (Linux; X11; Linux x86_64; rv:10.0) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
@@ -204,10 +253,6 @@ class BrowserFragment : Fragment() {
 
             toolBar.display.hint = "Enter an URL or search"
             toolBar.edit.hint = "Enter an URL or search"
-            toolBar.display.colors.copy(
-                securityIconSecure = R.drawable.ic_lock,
-                securityIconInsecure = R.drawable.ic_lock_open
-            )
             toolBar.elevation = 8F
 
             toolBar.setOnUrlCommitListener { url ->
