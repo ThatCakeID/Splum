@@ -155,10 +155,10 @@ class BrowserFragment : Fragment() {
             }
 
             override fun onNavigationStateChange(canGoBack: Boolean?, canGoForward: Boolean?) {
-                if(canGoBack == null) this@BrowserFragment.canGoBack = false
+                if (canGoBack == null) this@BrowserFragment.canGoBack = false
                 else this@BrowserFragment.canGoBack = canGoBack
 
-                if(canGoForward == null) this@BrowserFragment.canGoBack = false
+                if (canGoForward == null) this@BrowserFragment.canGoBack = false
                 else this@BrowserFragment.canGoForward = canGoForward
 
                 super.onNavigationStateChange(canGoBack, canGoForward)
@@ -245,7 +245,7 @@ class BrowserFragment : Fragment() {
                 secondaryContentDescription = "Stop Reload",
                 isInPrimaryState = { isLoading },
                 listener = {
-                    if(isLoading)
+                    if (isLoading)
                         session.stopLoading()
                     else
                         session.reload()
