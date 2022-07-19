@@ -195,8 +195,12 @@ class BrowserFragment : Fragment() {
             val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
                 (activity as MainActivity?)!!.switchActivity(SettingsActivity::class.java)
             }
+            val exitItem            = BrowserMenuImageText("Exit", R.drawable.ic_exit) {
+                sRuntime?.shutdown()
+                requireActivity().finish()
+            }
 
-            val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem)
+            val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem, exitItem)
             toolBar.display.menuBuilder = BrowserMenuBuilder(items)
             toolBar.elevation = 8F
 
