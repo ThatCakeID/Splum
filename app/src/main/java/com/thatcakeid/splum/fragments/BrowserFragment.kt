@@ -3,6 +3,7 @@ package com.thatcakeid.splum.fragments
 import android.app.Notification
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +35,6 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.mediasession.MediaSession
-import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.DownloadsUseCases
@@ -46,6 +46,7 @@ import mozilla.components.support.utils.URLStringUtils
 import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.geckoview.GeckoRuntime
 
+
 class BrowserFragment : Fragment() {
     private val shippedDomainsProvider = ShippedDomainsProvider()
     private val customDomainsProvider  = CustomDomainsProvider()
@@ -55,8 +56,9 @@ class BrowserFragment : Fragment() {
     private var canGoBack = false
     private var canGoForward = false
 
-    private var isLoading = false
-    private var isDesktop = false
+    private var isLoading   = false
+    private var isDesktop   = false
+    private var isLightMode = false
 
     private var openUrl: String? = null
     private var sRuntime: GeckoRuntime? = null
@@ -99,7 +101,14 @@ class BrowserFragment : Fragment() {
         }
 
         val osBuildRelease = android.os.Build.VERSION.RELEASE.toString()
-        val osBuildModel = android.os.Build.MODEL
+        val osBuildModel   = android.os.Build.MODEL
+        val checkNightMode = requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+        when (checkNightMode) {
+            Configuration.UI_MODE_NIGHT_YES -> { isLightMode = false }
+            Configuration.UI_MODE_NIGHT_NO -> { isLightMode = true }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> { isLightMode = true }
+        }
 
         val settings = DefaultSettings().apply {
             userAgentString = "Mozilla/5.0 (Linux; Android $osBuildRelease; $osBuildModel) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
@@ -222,7 +231,10 @@ class BrowserFragment : Fragment() {
         */
 
         fun setupToolBar() {
-            toolBar.setBackgroundColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimary))
+            if(isLightMode)
+                toolBar.setBackgroundColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimaryLight))
+            else
+                toolBar.setBackgroundColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimaryDark))
 
             val backIc = BrowserMenuItemToolbar.Button(
                 R.drawable.ic_arrow_back,
@@ -233,7 +245,10 @@ class BrowserFragment : Fragment() {
                 session.goBack()
             }
 
-            val forwardIc = BrowserMenuItemToolbar.Button(R.drawable.ic_arrow_forward, "Forward") {
+            val forwardIc = BrowserMenuItemToolbar.Button(
+                R.drawable.ic_arrow_forward,
+                "Forward",
+            ) {
                 if (!canGoForward) return@Button
                 session.goForward()
             }
@@ -251,7 +266,10 @@ class BrowserFragment : Fragment() {
                         session.reload()
                 })
 
-            val bookmarkIc = BrowserMenuItemToolbar.Button(R.drawable.ic_bookmark_border, "Bookmark") {
+            val bookmarkIc = BrowserMenuItemToolbar.Button(
+                R.drawable.ic_bookmark_border,
+                "Bookmark",
+            ) {
 
             }
 
@@ -263,7 +281,10 @@ class BrowserFragment : Fragment() {
             val extensionsItemIc    = BrowserMenuImageText("Extensions", R.drawable.ic_extension) { /* Do nothing */ }
 
             val historyItemIc       = BrowserMenuImageText("History", R.drawable.ic_history) { /* Do nothing */ }
-            val downloadsItemIc     = BrowserMenuImageText("Downloads", R.drawable.ic_arrow_downward) { /* Do nothing */ }
+            val downloadsItemIc     = BrowserMenuImageText(
+                "Downloads",
+                R.drawable.ic_arrow_downward,
+            ) { /* Do nothing */ }
             val bookmarksItemIc     = BrowserMenuImageText("Bookmarks", R.drawable.ic_bookmarks) { /* Do nothing */ }
 
             val shareItemIc         = BrowserMenuImageText("Share", R.drawable.ic_share) {
@@ -276,27 +297,37 @@ class BrowserFragment : Fragment() {
                 val shareIntent = Intent.createChooser(sendIntent, null)
                 startActivity(shareIntent)
             }
-            val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", initialState = { isDesktop }, listener = { checked ->
-                isDesktop = checked
-                session.toggleDesktopMode(checked, true)
+            val desktopItemIc       = BrowserMenuImageSwitch(
+                R.drawable.ic_desktop,
+                "Desktop View",
+                initialState = { isDesktop },
+                listener = { checked ->
+                    isDesktop = checked
+                    session.toggleDesktopMode(checked, true)
 
-                return@BrowserMenuImageSwitch
-            })
+                    return@BrowserMenuImageSwitch
+                })
 
-            val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
-                (activity as MainActivity?)!!.setCurrentFragmentVar("settings")
+            val settingsItem        = BrowserMenuImageText(
+                "Settings",
+                R.drawable.ic_settings
+                ) {
+                    (activity as MainActivity?)!!.setCurrentFragmentVar("settings")
 
-                requireActivity()
-                    .supportFragmentManager
-                    .beginTransaction()
-                    .addToBackStack("settingsFragment")
-                    .replace(R.id.fragmentContainerView, SettingsFragment(), "settingsFragment")
-                    .commit()
-            }
-            val exitItem            = BrowserMenuImageText("Exit", R.drawable.ic_exit) {
-                sRuntime?.shutdown()
-                requireActivity().finish()
-            }
+                    requireActivity()
+                        .supportFragmentManager
+                        .beginTransaction()
+                        .addToBackStack("settingsFragment")
+                        .replace(R.id.fragmentContainerView, SettingsFragment(), "settingsFragment")
+                        .commit()
+                }
+            val exitItem            = BrowserMenuImageText(
+                "Exit",
+                R.drawable.ic_exit
+                ) {
+                    sRuntime?.shutdown()
+                    requireActivity().finish()
+                }
 
             val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem, exitItem)
             toolBar.display.menuBuilder = BrowserMenuBuilder(items)
@@ -323,7 +354,7 @@ class BrowserFragment : Fragment() {
                 lifecycleOwner = this,
                 showTabs = ::showTabs,
                 countBasedOnSelectedTabType = false,
-                tabCounterMenu = TabCounterMenu(requireContext(), iconColor = 0xFFFFFF, onItemTapped = {
+                tabCounterMenu = TabCounterMenu(requireContext(), iconColor = 0xFFFFFF.toInt(), onItemTapped = {
                     Toast.makeText(requireActivity().applicationContext, "tAB!!!s 2", Toast.LENGTH_LONG).show()
                 })
             )

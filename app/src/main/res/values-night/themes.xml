@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Splum" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
         <item name="colorOnPrimary">@color/colorWhite</item>
 
@@ -9,7 +9,7 @@
         <item name="colorSecondaryVariant">@color/colorSecondaryDark</item>
         <item name="colorOnSecondary">@color/colorWhite</item>
 
-        <item name="android:colorBackground">@color/colorPrimary</item>
+        <item name="android:colorBackground">@color/colorPrimaryDark</item>
         <item name="colorOnBackground">@color/colorWhite</item>
 
         <item name="materialAlertDialogTheme">@style/Theme.Splum.DialogTheme</item>
@@ -23,8 +23,8 @@
         <item name="buttonBarNeutralButtonStyle">@style/Theme.Splum.ButtonStyle</item>
         <item name="buttonBarNegativeButtonStyle">@style/Theme.Splum.ButtonStyle</item>
 
-        <item name="colorSurface">@color/colorPrimary</item>
-        <item name="android:colorBackground">@color/colorPrimary</item>
+        <item name="colorSurface">@color/colorPrimaryDark</item>
+        <item name="android:colorBackground">@color/colorPrimaryDark</item>
         <item name="colorOnSurface">@color/colorWhite</item>
     </style>
 

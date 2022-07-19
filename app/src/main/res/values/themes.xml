@@ -1,20 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Splum" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
-        <item name="colorOnPrimary">@color/colorWhite</item>
+        <item name="colorPrimary">@color/colorPrimaryLight</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryLight</item>
+        <item name="colorOnPrimary">@color/colorBlack</item>
 
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSecondaryVariant">@color/colorSecondaryDark</item>
 
-        <item name="android:colorBackground">@color/colorWhite</item>
-        <item name="colorOnBackground">@color/colorPrimary</item>
+        <item name="android:colorBackground">@color/colorPrimaryLight</item>
+        <item name="colorOnBackground">@color/colorPrimaryDark</item>
 
         <item name="materialAlertDialogTheme">@style/Theme.Splum.DialogTheme</item>
         <item name="alertDialogTheme">@style/Theme.Splum.DialogTheme</item>
 
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.Splum.DialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
@@ -22,8 +23,9 @@
         <item name="buttonBarNeutralButtonStyle">@style/Theme.Splum.ButtonStyle</item>
         <item name="buttonBarNegativeButtonStyle">@style/Theme.Splum.ButtonStyle</item>
 
-        <item name="colorSurface">@color/colorWhite</item>
-        <item name="colorOnSurface">@color/colorPrimary</item>
+        <item name="colorSurface">@color/colorPrimaryLight</item>
+        <item name="android:colorBackground">@color/colorPrimaryLight</item>
+        <item name="colorOnSurface">@color/colorPrimaryDark</item>
     </style>
 
     <style name="Theme.Splum.ButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
