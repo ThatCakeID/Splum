@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         val rTimeSettings = GeckoRuntimeSettings.Builder()
             .aboutConfigEnabled(true)
             .preferredColorScheme(COLOR_SCHEME_DARK)
