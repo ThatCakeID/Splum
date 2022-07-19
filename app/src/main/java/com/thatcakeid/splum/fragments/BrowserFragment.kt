@@ -1,10 +1,7 @@
 package com.thatcakeid.splum.fragments
 
 import android.app.Notification
-import android.app.NotificationManager
 import android.content.Intent
-import android.content.res.Resources
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,12 +11,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompatSideChannelService
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
 import com.thatcakeid.splum.classes.MainRequestInterceptor
@@ -33,32 +26,21 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
-import mozilla.components.browser.state.state.BrowserState
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.browser.tabstray.TabViewHolder
-import mozilla.components.browser.tabstray.TabsTray
-import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.EngineSession
-import mozilla.components.concept.engine.EngineSessionState
-import mozilla.components.concept.engine.EngineView
-import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.mediasession.MediaSession
-import mozilla.components.concept.engine.prompt.PromptRequest
-import mozilla.components.concept.fetch.Response.Companion.SUCCESS
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.DownloadsUseCases
-import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.feature.toolbar.WebExtensionToolbarFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.utils.URLStringUtils
 import mozilla.components.ui.tabcounter.TabCounterMenu
-import org.mozilla.geckoview.*
+import org.mozilla.geckoview.GeckoRuntime
 
 class BrowserFragment : Fragment() {
     private val shippedDomainsProvider = ShippedDomainsProvider()
