@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val url: String = if (sharedPreferences.getBoolean("home_page_enabled", false))
-                "about:homepage"
+                "splum:homepage"
             else
                 "https://google.com/"
 
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         if(currentFragment != "browser") {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val url: String = if (sharedPreferences.getBoolean("home_page_enabled", false))
-                "about:homepage"
+                "splum:homepage"
             else
                 "https://google.com/"
 

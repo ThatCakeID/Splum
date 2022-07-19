@@ -13,8 +13,11 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
+import com.thatcakeid.splum.classes.MainRequestInterceptor
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
+import mozilla.components.browser.engine.gecko.GeckoEngineSession
+import mozilla.components.browser.engine.gecko.GeckoEngineView
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
@@ -22,6 +25,11 @@ import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.concept.engine.DefaultSettings
+import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSessionState
+import mozilla.components.concept.engine.EngineView
+import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.fetch.Response.Companion.SUCCESS
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
@@ -61,7 +69,7 @@ class BrowserFragment : Fragment() {
 
         val layout: View = inflater.inflate(R.layout.fragment_browser, container, false)
 
-        val geckoView = layout.findViewById<GeckoView>(R.id.geckoview)
+        val geckoView = layout.findViewById<GeckoEngineView>(R.id.geckoview)
         val toolBar   = layout.findViewById<BrowserToolbar>(R.id.toolBar)
 
         shippedDomainsProvider.initialize(requireActivity().applicationContext)
@@ -75,20 +83,53 @@ class BrowserFragment : Fragment() {
         val osBuildRelease = android.os.Build.VERSION.RELEASE.toString()
         val osBuildModel = android.os.Build.MODEL
 
-        val settings = GeckoSessionSettings.Builder()
-            .useTrackingProtection(false)
+        val settings = DefaultSettings().apply {
+            userAgentString = "Mozilla/5.0 (Linux; Android $osBuildRelease; $osBuildModel) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
+            requestInterceptor = MainRequestInterceptor(requireContext())
+            allowContentAccess = true
+            allowFileAccess = true
+        }
+
+            /*.useTrackingProtection(false)
             .userAgentOverride("Mozilla/5.0 (Linux; Android $osBuildRelease; $osBuildModel) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36")
             .build()
+             */
 
-        val session = GeckoSession(settings)
-            session.contentDelegate = object : GeckoSession.ContentDelegate {}
+        val session = GeckoEngineSession(sRuntime!!, defaultSettings = settings, openGeckoSession = true)
 
-        session.open(sRuntime!!)
-        geckoView.setSession(session)
+        geckoView.render(session)
 
         toolBar.url = openUrl.toString()
-        session.loadUri(openUrl.toString())
+        session.loadUrl(openUrl.toString())
 
+        session.register(object : EngineSession.Observer {
+            override fun onLocationChange(url: String) {
+                toolBar.url = url
+            }
+
+            override fun onProgress(progress: Int) {
+                toolBar.displayProgress(progress)
+            }
+
+            override fun onSecurityChange(secure: Boolean, host: String?, issuer: String?) {
+                if (secure)
+                    toolBar.siteSecure = Toolbar.SiteSecurity.SECURE
+                else
+                    toolBar.siteSecure = Toolbar.SiteSecurity.INSECURE
+
+                super.onSecurityChange(secure, host, issuer)
+            }
+
+            override fun onTitleChange(title: String) {
+                toolBar.title = title
+
+                super.onTitleChange(title)
+            }
+
+
+        })
+
+        /*
         session.progressDelegate   = object : GeckoSession.ProgressDelegate {
             override fun onPageStart(session: GeckoSession, url: String) {
                 toolBar.url = url
@@ -175,6 +216,7 @@ class BrowserFragment : Fragment() {
                 return super.onDateTimePrompt(session, prompt)
             }
         }
+        */
 
         fun setupToolBar() {
             toolBar.setBackgroundColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimary))
@@ -223,14 +265,9 @@ class BrowserFragment : Fragment() {
                 startActivity(shareIntent)
             }
             val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View", initialState = { false }, listener = { checked ->
-                if (checked)
-                    session.settings.userAgentOverride =
-                        "Mozilla/5.0 (Linux; X11; Linux x86_64; rv:10.0) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
-                else
-                    session.settings.userAgentOverride =
-                        "Mozilla/5.0 (Linux; Android $osBuildRelease; $osBuildModel) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
+                session.toggleDesktopMode(checked, true)
 
-                session.reload()
+                return@BrowserMenuImageSwitch
             })
 
             val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
@@ -256,7 +293,7 @@ class BrowserFragment : Fragment() {
             toolBar.elevation = 8F
 
             toolBar.setOnUrlCommitListener { url ->
-                session.loadUri(url)
+                session.loadUrl(url)
                 toolBar.url = url
 
                 true
