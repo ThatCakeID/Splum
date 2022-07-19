@@ -227,6 +227,7 @@ class BrowserFragment : Fragment() {
                         if (canGoBack)
                             session.goBack()
                         else
+                            sRuntime?.shutdown()
                             requireActivity().finish()
                     }
                 })
