@@ -25,17 +25,17 @@
             android:key="home_page_enabled"
             android:summaryOff="Off"
             android:summaryOn="On"
-            android:title="Home Page" />
-        <Preference android:title="Downloads" />
-        <Preference android:title="Logs" />
+            android:title="@string/settings_home_page" />
+        <Preference android:title="@string/settings_downloads" />
+        <Preference android:title="@string/settings_logs" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="About">
+    <PreferenceCategory android:title="@string/settings_about_title">
         <Preference
             android:key="licensePref"
-            android:title="Licenses" />
+            android:title="@string/settings_licenses" />
 
         <Preference
             android:summary="Copyright (C) 2022 ThatCakeID"
-            android:title="Copyright" />
+            android:title="@string/settings_copyright" />
     </PreferenceCategory>
 </PreferenceScreen>
