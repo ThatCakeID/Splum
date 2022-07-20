@@ -362,6 +362,8 @@ class BrowserFragment : Fragment() {
                 .onBackPressedDispatcher
                 .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
+                        toolBar.clearFocus()
+
                         if (canGoBack)
                             session.goBack()
                         else
