@@ -127,7 +127,6 @@ class BrowserFragment : Fragment() {
             override fun onLocationChange(url: String) { toolBar.url = url }
             override fun onProgress(progress: Int) { toolBar.displayProgress(progress) }
             override fun onLoadingStateChange(loading: Boolean) { isLoading = loading }
-            override fun onTitleChange(title: String) { toolBar.title = title }
 
             override fun onSecurityChange(secure: Boolean, host: String?, issuer: String?) {
                 if (secure)
