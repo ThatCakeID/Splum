@@ -88,7 +88,7 @@ class BrowserFragment : Fragment() {
 
         val customAutoCompleteDomains = resources.getStringArray(R.array.search_engines)
 
-        customAutoCompleteDomains.forEach { it ->
+        customAutoCompleteDomains.forEach {
             CustomDomains.add(requireContext(), it)
         }
 
