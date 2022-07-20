@@ -1,7 +1,6 @@
 package com.thatcakeid.splum.classes
 
 import android.content.Context
-import android.widget.Toast
 import mozilla.components.browser.errorpages.ErrorPages
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
