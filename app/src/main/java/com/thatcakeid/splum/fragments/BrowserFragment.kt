@@ -353,7 +353,7 @@ class BrowserFragment : Fragment() {
                 lifecycleOwner = this,
                 showTabs = ::showTabs,
                 countBasedOnSelectedTabType = false,
-                tabCounterMenu = TabCounterMenu(requireContext(), iconColor = 0xFFFFFF.toInt(), onItemTapped = {
+                tabCounterMenu = TabCounterMenu(requireContext(), iconColor = 0xFFFFFF, onItemTapped = {
                     Toast.makeText(requireActivity().applicationContext, "tAB!!!s 2", Toast.LENGTH_LONG).show()
                 })
             )
