@@ -172,7 +172,7 @@ class BrowserFragment : Fragment() {
         }
 
         DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
-        PromptFeature(this, browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
+        PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
 
         /*
 
