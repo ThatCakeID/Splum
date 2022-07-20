@@ -120,6 +120,13 @@ class BrowserFragment : Fragment() {
 
         val session = GeckoEngineSession(sRuntime!!, defaultSettings = settings, openGeckoSession = true)
 
+        val featureRequestPermissions : (Array<String>) -> Unit = { permissions ->
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}.launch(permissions)
+        }
+
+        DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
+        PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
+
         session.register(object : EngineSession.Observer {
             override fun onLocationChange(url: String) { toolBar.url = url }
             override fun onProgress(progress: Int) { toolBar.displayProgress(progress) }
@@ -166,13 +173,6 @@ class BrowserFragment : Fragment() {
                 super.onNavigationStateChange(canGoBack, canGoForward)
             }
         })
-
-        val featureRequestPermissions : (Array<String>) -> Unit = { permissions ->
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}.launch(permissions)
-        }
-
-        DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
-        PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
 
         /*
 
