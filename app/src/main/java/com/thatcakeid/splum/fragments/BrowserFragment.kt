@@ -12,6 +12,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -38,6 +39,7 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.DownloadsUseCases
+import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.feature.toolbar.WebExtensionToolbarFeature
@@ -165,7 +167,12 @@ class BrowserFragment : Fragment() {
             }
         })
 
-        DownloadsFeature(requireContext(), store = browserStore, useCases = DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
+        val featureRequestPermissions : (Array<String>) -> Unit = { permissions ->
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}.launch(permissions)
+        }
+
+        DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
+        PromptFeature(this, browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
 
         /*
 
