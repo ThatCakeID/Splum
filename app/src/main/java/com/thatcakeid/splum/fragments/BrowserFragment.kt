@@ -42,9 +42,7 @@ import mozilla.components.feature.downloads.DownloadsUseCases
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
-import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
-import mozilla.components.feature.toolbar.ToolbarFeature
-import mozilla.components.feature.toolbar.WebExtensionToolbarFeature
+import mozilla.components.feature.toolbar.*
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.utils.URLStringUtils
 import mozilla.components.ui.tabcounter.TabCounterMenu
@@ -129,6 +127,8 @@ class BrowserFragment : Fragment() {
         DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
         PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
         ToolbarFeature(toolBar, browserStore, SessionUseCases(browserStore).loadUrl).start()
+        ToolbarInteractor(toolBar, SessionUseCases(browserStore).loadUrl).start()
+        ToolbarPresenter(toolBar, browserStore).start()
 
         val toolbarAutocompleteFeature = ToolbarAutocompleteFeature(toolBar)
         toolbarAutocompleteFeature.addDomainProvider(shippedDomainsProvider)
@@ -370,8 +370,7 @@ class BrowserFragment : Fragment() {
                 .onBackPressedDispatcher
                 .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
-                        if (toolBar.hasFocus()) {
-                            toolBar.clearFocus()
+                        if (toolBar.onBackPressed()) {
                             return
                         }
 
