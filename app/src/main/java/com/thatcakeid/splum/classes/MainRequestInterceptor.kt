@@ -19,6 +19,8 @@ class MainRequestInterceptor(private val context: Context) : RequestInterceptor 
     ): RequestInterceptor.InterceptionResponse? {
         return if (uri.contentEquals("splum:homepage"))
             RequestInterceptor.InterceptionResponse.Content("splum:homepage")
+        else if (uri.contentEquals("splum:secreturl"))
+            RequestInterceptor.InterceptionResponse.Content("<a href=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\">Here's the secret</a>")
         else
             super.onLoadRequest(engineSession, uri, lastUri, hasUserGesture, isSameDomain, isRedirect, isDirectNavigation, isSubframeRequest)
     }

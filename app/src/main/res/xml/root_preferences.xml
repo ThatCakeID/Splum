@@ -35,6 +35,7 @@
             android:title="@string/settings_licenses" />
 
         <Preference
+            android:key="copyPref"
             android:summary="Copyright (C) 2022 ThatCakeID"
             android:title="@string/settings_copyright" />
     </PreferenceCategory>

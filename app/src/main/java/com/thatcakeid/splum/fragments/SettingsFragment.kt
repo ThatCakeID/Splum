@@ -12,12 +12,32 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
         val licensePref = findPreference<Preference>("licensePref")
+        val copyPref    = findPreference<Preference>("copyPref")
+
+        var copyClicks  = 0;
+
         licensePref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Licenses")
                 .setMessage(resources.getString(R.string.settings_licenses_full))
                 .setPositiveButton("Ok") { _, _ -> }
                 .show()
+
+            return@OnPreferenceClickListener true
+        }
+
+        copyPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            copyClicks++
+
+            if(copyClicks == 5) {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Definitely not an easter egg")
+                    .setMessage("I know you have been looking in the code to find this easter egg, maybe not but I'm 99% sure you did.\n\n\n\n\n\n\nBtw here is a secret url:\n splum:secreturl")
+                    .setPositiveButton("Ok") { _, _ -> }
+                    .show()
+
+                copyClicks = 0
+            }
 
             return@OnPreferenceClickListener true
         }
