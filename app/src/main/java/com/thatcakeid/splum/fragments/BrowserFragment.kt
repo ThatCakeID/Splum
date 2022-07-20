@@ -127,7 +127,6 @@ class BrowserFragment : Fragment() {
         DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
         PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
         ToolbarFeature(toolBar, browserStore, SessionUseCases(browserStore).loadUrl).start()
-        ToolbarInteractor(toolBar, SessionUseCases(browserStore).loadUrl).start()
 
         val toolbarAutocompleteFeature = ToolbarAutocompleteFeature(toolBar)
         toolbarAutocompleteFeature.addDomainProvider(shippedDomainsProvider)
