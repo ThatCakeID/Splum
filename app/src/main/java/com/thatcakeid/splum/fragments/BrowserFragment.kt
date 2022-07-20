@@ -163,11 +163,8 @@ class BrowserFragment : Fragment() {
             }
 
             override fun onNavigationStateChange(canGoBack: Boolean?, canGoForward: Boolean?) {
-                if (canGoBack == null) this@BrowserFragment.canGoBack = false
-                else this@BrowserFragment.canGoBack = canGoBack
-
-                if (canGoForward == null) this@BrowserFragment.canGoBack = false
-                else this@BrowserFragment.canGoForward = canGoForward
+                if (canGoBack != null) this@BrowserFragment.canGoBack = canGoBack
+                if (canGoForward != null) this@BrowserFragment.canGoForward = canGoForward
 
                 super.onNavigationStateChange(canGoBack, canGoForward)
             }
