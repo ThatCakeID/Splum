@@ -36,7 +36,6 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.mediasession.MediaSession
-import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.DownloadsUseCases
