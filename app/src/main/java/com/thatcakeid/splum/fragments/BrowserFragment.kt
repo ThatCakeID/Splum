@@ -102,9 +102,8 @@ class BrowserFragment : Fragment() {
 
         val osBuildRelease = android.os.Build.VERSION.RELEASE.toString()
         val osBuildModel   = android.os.Build.MODEL
-        val checkNightMode = requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
-        when (checkNightMode) {
+        when (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_YES -> { isLightMode = false }
             Configuration.UI_MODE_NIGHT_NO -> { isLightMode = true }
             Configuration.UI_MODE_NIGHT_UNDEFINED -> { isLightMode = true }
