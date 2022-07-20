@@ -128,10 +128,6 @@ class BrowserFragment : Fragment() {
         PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
         ToolbarFeature(toolBar, browserStore, SessionUseCases(browserStore).loadUrl).start()
 
-        val toolbarAutocompleteFeature = ToolbarAutocompleteFeature(toolBar)
-        toolbarAutocompleteFeature.addDomainProvider(shippedDomainsProvider)
-        toolbarAutocompleteFeature.addDomainProvider(customDomainsProvider)
-
         session.register(object : EngineSession.Observer {
             override fun onLocationChange(url: String) { toolBar.url = url }
             override fun onProgress(progress: Int) { toolBar.displayProgress(progress) }
