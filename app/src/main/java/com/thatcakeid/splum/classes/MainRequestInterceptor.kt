@@ -23,7 +23,6 @@ class MainRequestInterceptor(private val context: Context) : RequestInterceptor 
             super.onLoadRequest(engineSession, uri, lastUri, hasUserGesture, isSameDomain, isRedirect, isDirectNavigation, isSubframeRequest)
     }
 
-
     override fun onErrorRequest(
         session: EngineSession,
         errorType: ErrorType,
