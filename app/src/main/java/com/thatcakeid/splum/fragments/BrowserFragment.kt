@@ -356,12 +356,13 @@ class BrowserFragment : Fragment() {
                 .onBackPressedDispatcher
                 .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
-                        toolBar.clearFocus()
+                        if (toolBar.hasFocus()) {
+                            toolBar.clearFocus()
+                            return
+                        }
 
-                        if (canGoBack)
-                            session.goBack()
-                        else
-                            requireActivity().moveTaskToBack(true)
+                        if (canGoBack) session.goBack()
+                        else requireActivity().moveTaskToBack(true)
                     }
                 })
         }
