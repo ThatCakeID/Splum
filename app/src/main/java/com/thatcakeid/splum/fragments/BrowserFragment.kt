@@ -118,11 +118,6 @@ class BrowserFragment : Fragment() {
 
         val session = GeckoEngineSession(sRuntime!!, defaultSettings = settings, openGeckoSession = true)
 
-        geckoView.render(session)
-
-        toolBar.url = openUrl.toString()
-        session.loadUrl(openUrl.toString())
-
         session.register(object : EngineSession.Observer {
             override fun onLocationChange(url: String) { toolBar.url = url }
             override fun onProgress(progress: Int) { toolBar.displayProgress(progress) }
@@ -361,18 +356,23 @@ class BrowserFragment : Fragment() {
                 .onBackPressedDispatcher
                 .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
-                        toolBar.clearFocus()
+                        if (toolBar.hasFocus()) {
+                            toolBar.clearFocus()
+                            return
+                        }
 
-                        if (canGoBack)
-                            session.goBack()
-                        else
-                            requireActivity().moveTaskToBack(true)
+                        if (canGoBack) session.goBack()
+                        else requireActivity().moveTaskToBack(true)
                     }
                 })
         }
 
         setupToolBar()
         registerBackPressed()
+        geckoView.render(session)
+
+        toolBar.url = openUrl.toString()
+        session.loadUrl(openUrl.toString())
 
         return layout
     }
