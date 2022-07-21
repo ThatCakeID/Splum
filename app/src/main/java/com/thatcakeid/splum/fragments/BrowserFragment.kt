@@ -18,6 +18,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
 import com.thatcakeid.splum.classes.MainRequestInterceptor
@@ -41,6 +42,7 @@ import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.DownloadsUseCases
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.*
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
@@ -85,8 +87,9 @@ class BrowserFragment : Fragment() {
 
         val layout: View = inflater.inflate(R.layout.fragment_browser, container, false)
 
-        val geckoView = layout.findViewById<GeckoEngineView>(R.id.geckoview)
-        val toolBar   = layout.findViewById<BrowserToolbar>(R.id.toolBar)
+        val swipeRefreshLayout = layout.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        val geckoView          = layout.findViewById<GeckoEngineView>(R.id.geckoView)
+        val toolBar            = layout.findViewById<BrowserToolbar>(R.id.toolBar)
 
         val customAutoCompleteDomains = resources.getStringArray(R.array.search_engines)
 
@@ -121,6 +124,7 @@ class BrowserFragment : Fragment() {
 
         DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
         PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
+        SwipeRefreshFeature(browserStore, SessionUseCases(browserStore).reload, swipeRefreshLayout).start()
         ToolbarFeature(toolBar, browserStore, SessionUseCases(browserStore).loadUrl).start()
 
         ToolbarAutocompleteFeature(toolBar).apply {
