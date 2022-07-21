@@ -97,11 +97,6 @@ class BrowserFragment : Fragment() {
         shippedDomainsProvider.initialize(requireActivity().applicationContext)
         customDomainsProvider.initialize(requireActivity().applicationContext)
 
-        ToolbarAutocompleteFeature(toolBar).apply {
-            this.addDomainProvider(shippedDomainsProvider)
-            this.addDomainProvider(customDomainsProvider)
-        }
-
         val osBuildRelease = android.os.Build.VERSION.RELEASE.toString()
         val osBuildModel   = android.os.Build.MODEL
 
@@ -127,6 +122,11 @@ class BrowserFragment : Fragment() {
         DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
         PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
         ToolbarFeature(toolBar, browserStore, SessionUseCases(browserStore).loadUrl).start()
+
+        ToolbarAutocompleteFeature(toolBar).apply {
+            this.addDomainProvider(shippedDomainsProvider)
+            this.addDomainProvider(customDomainsProvider)
+        }
 
         session.register(object : EngineSession.Observer {
             override fun onLocationChange(url: String) { toolBar.url = url }
