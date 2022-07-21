@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Splum" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimaryDark</item>
@@ -16,6 +16,10 @@
         <item name="alertDialogTheme">@style/Theme.Splum.DialogTheme</item>
 
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <item name="android:navigationBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
     </style>
 
     <style name="Theme.Splum.DialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
