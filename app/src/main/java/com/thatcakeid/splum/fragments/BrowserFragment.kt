@@ -392,8 +392,8 @@ class BrowserFragment : Fragment() {
 
         setupToolBar()
         registerBackPressed()
-        geckoView.render(session)
 
+        geckoView.render(session)
         session.loadUrl(openUrl.toString())
 
         return layout
