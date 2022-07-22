@@ -243,7 +243,7 @@ class BrowserFragment : Fragment() {
         */
 
         fun setupToolBar() {
-            if(isLightMode)
+            if (isLightMode)
                 toolBar.setBackgroundColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimaryLight))
             else
                 toolBar.setBackgroundColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimaryDark))
@@ -343,7 +343,6 @@ class BrowserFragment : Fragment() {
 
             val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem, exitItem)
             toolBar.display.menuBuilder = BrowserMenuBuilder(items)
-
             toolBar.display.hint = "Enter an URL or search"
             toolBar.edit.hint = "Enter an URL or search"
             toolBar.elevation = 8F
@@ -366,7 +365,7 @@ class BrowserFragment : Fragment() {
                 lifecycleOwner = this,
                 showTabs = ::showTabs,
                 countBasedOnSelectedTabType = false,
-                tabCounterMenu = TabCounterMenu(requireContext(), iconColor = 0xFFFFFF, onItemTapped = {
+                tabCounterMenu = TabCounterMenu(requireContext(), iconColor = ContextCompat.getColor(requireContext(), R.color.ic_color_foreground), onItemTapped = {
                     Toast.makeText(requireActivity().applicationContext, "tAB!!!s 2", Toast.LENGTH_LONG).show()
                 })
             )
