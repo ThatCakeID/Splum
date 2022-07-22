@@ -7,7 +7,7 @@ import androidx.preference.PreferenceManager
 import com.thatcakeid.splum.fragments.BrowserFragment
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
-import org.mozilla.geckoview.GeckoRuntimeSettings.COLOR_SCHEME_DARK
+import org.mozilla.geckoview.GeckoRuntimeSettings.COLOR_SCHEME_SYSTEM
 
 
 class MainActivity : AppCompatActivity() {
@@ -18,10 +18,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         val rTimeSettings = GeckoRuntimeSettings.Builder()
             .aboutConfigEnabled(true)
-            .preferredColorScheme(COLOR_SCHEME_DARK)
+            .preferredColorScheme(COLOR_SCHEME_SYSTEM)
             .consoleOutput(true)
             .build()
 
