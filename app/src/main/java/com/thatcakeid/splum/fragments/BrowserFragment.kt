@@ -119,12 +119,12 @@ class BrowserFragment : Fragment() {
 
         val session = GeckoEngineSession(sRuntime!!, defaultSettings = settings, openGeckoSession = true)
 
-        val featureRequestPermissions : (Array<String>) -> Unit = { permissions ->
+        val promptFeatRequestPerms : (Array<String>) -> Unit = { permissions ->
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}.launch(permissions)
         }
 
         DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
-        PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = featureRequestPermissions).start()
+        PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = promptFeatRequestPerms).start()
         SwipeRefreshFeature(browserStore, SessionUseCases(browserStore).reload, swipeRefreshLayout).start()
         ToolbarFeature(toolBar, browserStore, SessionUseCases(browserStore).loadUrl).start()
 
