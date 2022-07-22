@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
 import com.thatcakeid.splum.classes.MainRequestInterceptor
@@ -136,6 +137,16 @@ class BrowserFragment : Fragment() {
             override fun onLocationChange(url: String) { toolBar.url = url }
             override fun onProgress(progress: Int) { toolBar.displayProgress(progress) }
             override fun onLoadingStateChange(loading: Boolean) { isLoading = loading }
+
+            override fun onCrash() {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Session crashed")
+                    .setMessage("An unknown error occurred while processing.")
+                    .setPositiveButton("Ok") { _, _ -> requireActivity().onBackPressed() }
+                    .show()
+
+                super.onCrash()
+            }
 
             override fun onSecurityChange(secure: Boolean, host: String?, issuer: String?) {
                 if (secure)
