@@ -380,9 +380,7 @@ class BrowserFragment : Fragment() {
                 .onBackPressedDispatcher
                 .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
-                        if (toolBar.onBackPressed()) {
-                            return
-                        }
+                        if (toolBar.onBackPressed()) return
 
                         if (canGoBack) session.goBack()
                         else requireActivity().moveTaskToBack(true)
