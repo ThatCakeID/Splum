@@ -149,10 +149,8 @@ class BrowserFragment : Fragment() {
             }
 
             override fun onSecurityChange(secure: Boolean, host: String?, issuer: String?) {
-                if (secure)
-                    toolBar.siteSecure = Toolbar.SiteSecurity.SECURE
-                else
-                    toolBar.siteSecure = Toolbar.SiteSecurity.INSECURE
+                if (secure) toolBar.siteSecure = Toolbar.SiteSecurity.SECURE
+                else toolBar.siteSecure = Toolbar.SiteSecurity.INSECURE
 
                 super.onSecurityChange(secure, host, issuer)
             }
