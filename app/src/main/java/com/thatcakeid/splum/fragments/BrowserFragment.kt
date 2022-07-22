@@ -358,6 +358,10 @@ class BrowserFragment : Fragment() {
                 URLStringUtils.toDisplayUrl(url)
             }
 
+            toolBar.edit.setOnEditFocusChangeListener { hasFocus ->
+                if (!hasFocus) toolBar.displayMode()
+            }
+
             TabsToolbarFeature(
                 toolbar = toolBar,
                 store = browserStore,
