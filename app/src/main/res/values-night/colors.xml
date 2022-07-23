@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_color_foreground">@color/colorWhite</color>
+    <color name="mozac_ui_icons_fill">@color/ic_color_foreground</color>
+
+    <!-- This is to override the toolbar icons -->
+    <color name="photonWhite">@color/colorWhite</color>
+    <color name="photonBlack">@color/colorBlack</color>
 </resources>

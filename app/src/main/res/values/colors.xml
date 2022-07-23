@@ -12,4 +12,10 @@
 
     <color name="ic_launcher_background">#151A1B</color>
     <color name="ic_color_foreground">@color/colorBlack</color>
+
+    <color name="mozac_ui_icons_fill">@color/ic_color_foreground</color>
+
+    <!-- This is to override the toolbar icons -->
+    <color name="photonWhite">@color/colorBlack</color>
+    <color name="photonBlack">@color/colorWhite</color>
 </resources>
