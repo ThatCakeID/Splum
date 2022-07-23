@@ -18,8 +18,8 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:windowLightStatusBar">false</item>
 
-        <item name="android:navigationBarColor">?attr/colorPrimaryVariant</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+        <item name="android:navigationBarColor" tools:targetApi="O_MR1">?attr/colorPrimaryVariant</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="O_MR1">false</item>
     </style>
 
     <style name="Theme.Splum.DialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
