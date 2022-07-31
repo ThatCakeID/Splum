@@ -48,9 +48,7 @@
         = License:    https://github.com/ThatCakeID/Splum/blob/master/LICENSE\n
         ====================================
     </string>
-    <string name="mozac_browser_errorpages_page_go_back">Return</string>
-    <string name="mozac_browser_errorpages_page_title">Error</string>
-    <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2">Bad certificate</string>
-    <string name="mozac_feature_addons_user_rating_count">Ratings</string>
-    <string name="mozac_feature_prompt_logins_save_message">Do you want to save login credentials?</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- OTHER -->
 </resources>

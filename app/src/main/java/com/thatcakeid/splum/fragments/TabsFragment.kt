@@ -1,60 +1,72 @@
 package com.thatcakeid.splum.fragments
 
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
+import mozilla.components.browser.engine.gecko.GeckoEngineView
+import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.tabstray.TabsAdapter
+import mozilla.components.browser.tabstray.TabsTray
+import mozilla.components.feature.tabs.tabstray.TabsFeature
+import org.mozilla.geckoview.GeckoRuntime
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TabsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TabsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var browserStore: BrowserStore? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
+        arguments?.let {}
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tabs, container, false)
+        val layout: View = inflater.inflate(R.layout.fragment_tabs, container, false)
+
+        browserStore = (activity as MainActivity?)!!.browserStore
+
+        val tabsList = layout.findViewById<RecyclerView>(R.id.tabsList)
+
+        tabsList.adapter = tabsAdapter()
+        tabsList.layoutManager = GridLayoutManager(context, 2)
+
+        TabsFeature(
+            tabsTray = tabsAdapter(),
+            store = browserStore!!
+        ).start()
+
+        return layout
+    }
+
+    private fun tabsAdapter() : TabsAdapter {
+        return TabsAdapter(
+            delegate = object : TabsTray.Delegate {
+                override fun onTabClosed(tab: TabSessionState, source: String?) {
+                    Toast.makeText(requireActivity().applicationContext, "onTabClosed", Toast.LENGTH_LONG).show()
+                }
+
+                override fun onTabSelected(tab: TabSessionState, source: String?) {
+                    Toast.makeText(requireActivity().applicationContext, "onTabSelected", Toast.LENGTH_LONG).show()
+                }
+            }
+        )
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TabsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(bStore: BrowserStore?) =
             TabsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+                arguments = Bundle().apply {}
             }
     }
 }

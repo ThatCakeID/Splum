@@ -20,6 +20,6 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "Splum"
+rootProject.name = "SplumRewrite"
 include ':app'
 include ':TCIDServices'

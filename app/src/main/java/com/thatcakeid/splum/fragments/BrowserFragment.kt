@@ -1,31 +1,21 @@
 package com.thatcakeid.splum.fragments
 
-import android.app.Notification
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
-import androidx.fragment.app.Fragment
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
-import com.thatcakeid.splum.classes.MainRequestInterceptor
+import com.thatcakeid.splum.tools.MainRequestInterceptor
 import mozilla.components.browser.domains.CustomDomains
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
+import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.GeckoEngineSession
 import mozilla.components.browser.engine.gecko.GeckoEngineView
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -33,49 +23,46 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
+import mozilla.components.browser.state.engine.EngineMiddleware
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.DefaultSettings
+import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession
-import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.toolbar.Toolbar
-import mozilla.components.feature.downloads.DownloadsFeature
-import mozilla.components.feature.downloads.DownloadsUseCases
-import mozilla.components.feature.prompts.PromptFeature
+import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
-import mozilla.components.feature.session.SwipeRefreshFeature
+import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
-import mozilla.components.feature.toolbar.*
-import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.utils.URLStringUtils
-import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.geckoview.GeckoRuntime
-
 
 class BrowserFragment : Fragment() {
     private val shippedDomainsProvider = ShippedDomainsProvider()
     private val customDomainsProvider  = CustomDomainsProvider()
 
-    private val webExtToolbarFeature = ViewBoundFeatureWrapper<WebExtensionToolbarFeature>()
-
-    private var canGoBack = false
+    private var canGoBack    = false
     private var canGoForward = false
 
     private var isLoading   = false
     private var isDesktop   = false
     private var isLightMode = false
+    private var isFavourite = false
 
-    private var openUrl: String? = null
+    private var openUrl:  String?       = null
     private var sRuntime: GeckoRuntime? = null
 
-    private var browserStore: BrowserStore = BrowserStore()
-    private var mediaNotif: Notification? = null
+    private var browserStore: BrowserStore? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            openUrl = it.getString("openUrl")
+            openUrl  = it.getString("openUrl")
             sRuntime = it.getParcelable("sRuntime") as GeckoRuntime?
         }
     }
@@ -83,70 +70,51 @@ class BrowserFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-
+    ): View? {
         val layout: View = inflater.inflate(R.layout.fragment_browser, container, false)
 
-        val swipeRefreshLayout = layout.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
-        val geckoView          = layout.findViewById<GeckoEngineView>(R.id.geckoView)
-        val toolBar            = layout.findViewById<BrowserToolbar>(R.id.toolBar)
+        val geckoView = layout.findViewById<GeckoEngineView>(R.id.geckoView)
+        val toolBar   = layout.findViewById<BrowserToolbar>(R.id.toolBar)
 
-        val customAutoCompleteDomains = resources.getStringArray(R.array.search_engines)
+        browserStore  = (activity as MainActivity?)!!.browserStore
 
-        customAutoCompleteDomains.forEach {
-            CustomDomains.add(requireContext(), it)
-        }
+        resources.getStringArray(R.array.auto_complete_urls).forEach { CustomDomains.add(requireContext(), it) }
 
         shippedDomainsProvider.initialize(requireActivity().applicationContext)
         customDomainsProvider.initialize(requireActivity().applicationContext)
-
-        val osBuildRelease = android.os.Build.VERSION.RELEASE.toString()
-        val osBuildModel   = android.os.Build.MODEL
-
-        when (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> { isLightMode = false }
-            Configuration.UI_MODE_NIGHT_NO -> { isLightMode = true }
-            Configuration.UI_MODE_NIGHT_UNDEFINED -> { isLightMode = true }
-        }
-
-        val settings = DefaultSettings().apply {
-            userAgentString = "Mozilla/5.0 (Linux; Android $osBuildRelease; $osBuildModel) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
-            requestInterceptor = MainRequestInterceptor(requireContext())
-            allowContentAccess = true
-            allowFileAccess = true
-        }
-
-        val session = GeckoEngineSession(sRuntime!!, defaultSettings = settings, openGeckoSession = true)
-
-        val promptFeatRequestPerms : (Array<String>) -> Unit = { permissions ->
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}.launch(permissions)
-        }
-
-        DownloadsFeature(requireContext(), browserStore, DownloadsUseCases(browserStore), fragmentManager = childFragmentManager).start()
-        PromptFeature(requireActivity(), browserStore, fragmentManager = childFragmentManager, onNeedToRequestPermissions = promptFeatRequestPerms).start()
-        SwipeRefreshFeature(browserStore, SessionUseCases(browserStore).reload, swipeRefreshLayout).start()
-        ToolbarFeature(toolBar, browserStore, SessionUseCases(browserStore).loadUrl).start()
 
         ToolbarAutocompleteFeature(toolBar).apply {
             this.addDomainProvider(shippedDomainsProvider)
             this.addDomainProvider(customDomainsProvider)
         }
 
-        session.register(object : EngineSession.Observer {
+        when (requireContext().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES       -> { isLightMode = false }
+            Configuration.UI_MODE_NIGHT_NO        -> { isLightMode = true }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> { isLightMode = true }
+        }
+
+        val settings = DefaultSettings().apply {
+            userAgentString = "Mozilla/5.0 (Linux; Android ${android.os.Build.VERSION.RELEASE} ${android.os.Build.MODEL}) AppleWebKit/537.36 (KHTML, like Gecko) Splum/100.0.20220425210429 Mobile Safari/537.36"
+            requestInterceptor = MainRequestInterceptor(requireContext())
+            allowContentAccess = true
+            allowFileAccess = true
+        }
+
+        val geckoEngineSession = GeckoEngineSession(sRuntime!!, defaultSettings = settings, openGeckoSession = true)
+
+        /*
+        SessionFeature(
+            store = browserStore!!,
+            engineView = geckoView,
+            goBackUseCase = SessionUseCases(browserStore!!).goBack
+        ).start()
+        */
+
+        geckoEngineSession.register(object : EngineSession.Observer {
             override fun onLocationChange(url: String) { toolBar.url = url }
             override fun onProgress(progress: Int) { toolBar.displayProgress(progress) }
             override fun onLoadingStateChange(loading: Boolean) { isLoading = loading }
-
-            override fun onCrash() {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Session crashed")
-                    .setMessage("An unknown error occurred while processing.")
-                    .setPositiveButton("Ok") { _, _ -> requireActivity().onBackPressed() }
-                    .show()
-
-                super.onCrash()
-            }
 
             override fun onSecurityChange(secure: Boolean, host: String?, issuer: String?) {
                 if (secure) toolBar.siteSecure = Toolbar.SiteSecurity.SECURE
@@ -155,92 +123,13 @@ class BrowserFragment : Fragment() {
                 super.onSecurityChange(secure, host, issuer)
             }
 
-            override fun onMediaFullscreenChanged(
-                fullscreen: Boolean,
-                elementMetadata: MediaSession.ElementMetadata?
-            ) {
-                val window = requireActivity().window
-                val winDecorView = window.decorView
-
-                val windowInsetsController =
-                    WindowCompat.getInsetsController(window, winDecorView)
-                windowInsetsController.systemBarsBehavior =
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-
-                if (fullscreen) {
-                    toolBar.visibility = GONE
-                    windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
-                    requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                } else {
-                    toolBar.visibility = VISIBLE
-                    windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
-                    requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                }
-
-                super.onMediaFullscreenChanged(fullscreen, elementMetadata)
-            }
-
             override fun onNavigationStateChange(canGoBack: Boolean?, canGoForward: Boolean?) {
-                if (canGoBack != null) this@BrowserFragment.canGoBack = canGoBack
+                if (canGoBack != null)    this@BrowserFragment.canGoBack    = canGoBack
                 if (canGoForward != null) this@BrowserFragment.canGoForward = canGoForward
 
                 super.onNavigationStateChange(canGoBack, canGoForward)
             }
         })
-
-        /*
-
-        session.promptDelegate = object : GeckoSession.PromptDelegate {
-            override fun onAlertPrompt(
-                session: GeckoSession,
-                prompt: GeckoSession.PromptDelegate.AlertPrompt
-            ): GeckoResult<GeckoSession.PromptDelegate.PromptResponse>? {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Message from ${toolBar.url}.")
-                    .setMessage(prompt.message)
-                    .setPositiveButton("Ok") { _, _ -> prompt.dismiss() }
-                    .show()
-
-                return super.onAlertPrompt(session, prompt)
-            }
-
-            override fun onSharePrompt(
-                session: GeckoSession,
-                prompt: GeckoSession.PromptDelegate.SharePrompt
-            ): GeckoResult<GeckoSession.PromptDelegate.PromptResponse>? {
-                val sendIntent: Intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, prompt.text)
-                    type = "text/plain"
-                }
-
-                val shareIntent = Intent.createChooser(sendIntent, null)
-                startActivity(shareIntent)
-                prompt.confirm(SUCCESS)
-
-                return super.onSharePrompt(session, prompt)
-            }
-
-            override fun onDateTimePrompt(
-                session: GeckoSession,
-                prompt: GeckoSession.PromptDelegate.DateTimePrompt
-            ): GeckoResult<GeckoSession.PromptDelegate.PromptResponse>? {
-                val datePicker =
-                    MaterialDatePicker.Builder.datePicker()
-                        .setTitleText("Select date")
-                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                        .build()
-
-                datePicker.addOnPositiveButtonClickListener {
-                    prompt.confirm(datePicker.selection.toString())
-                }
-
-                datePicker.show(requireActivity().supportFragmentManager, "datePick")
-
-                return super.onDateTimePrompt(session, prompt)
-            }
-        }
-        */
 
         fun setupToolBar() {
             if (isLightMode)
@@ -254,7 +143,7 @@ class BrowserFragment : Fragment() {
                 isEnabled = { true }
             ) {
                 if (!canGoBack) return@Button
-                session.goBack()
+                geckoEngineSession.goBack()
             }
 
             val forwardIc = BrowserMenuItemToolbar.Button(
@@ -262,7 +151,7 @@ class BrowserFragment : Fragment() {
                 "Forward",
             ) {
                 if (!canGoForward) return@Button
-                session.goForward()
+                geckoEngineSession.goForward()
             }
 
             val reloadIc = BrowserMenuItemToolbar.TwoStateButton(
@@ -273,17 +162,23 @@ class BrowserFragment : Fragment() {
                 isInPrimaryState = { !isLoading },
                 listener = {
                     if (isLoading)
-                        session.stopLoading()
+                        geckoEngineSession.stopLoading()
                     else
-                        session.reload()
+                        geckoEngineSession.reload()
                 })
 
-            val bookmarkIc = BrowserMenuItemToolbar.Button(
-                R.drawable.ic_bookmark_border,
-                "Bookmark",
-            ) {
-
-            }
+            val bookmarkIc = BrowserMenuItemToolbar.TwoStateButton(
+                primaryImageResource = R.drawable.ic_bookmark_border,
+                primaryContentDescription = "Add to favorites",
+                secondaryImageResource = R.drawable.ic_bookmark,
+                secondaryContentDescription = "Remove from favorites",
+                isInPrimaryState = { !isFavourite },
+                listener = {
+                    if(isFavourite)
+                        isFavourite = false
+                    else
+                        isFavourite = true
+                })
 
             val menuToolbar         = BrowserMenuItemToolbar(listOf(backIc, forwardIc, reloadIc, bookmarkIc))
 
@@ -293,10 +188,7 @@ class BrowserFragment : Fragment() {
             val extensionsItemIc    = BrowserMenuImageText("Extensions", R.drawable.ic_extension) { /* Do nothing */ }
 
             val historyItemIc       = BrowserMenuImageText("History", R.drawable.ic_history) { /* Do nothing */ }
-            val downloadsItemIc     = BrowserMenuImageText(
-                "Downloads",
-                R.drawable.ic_arrow_downward,
-            ) { /* Do nothing */ }
+            val downloadsItemIc     = BrowserMenuImageText("Downloads", R.drawable.ic_download) { /* Do nothing */ }
             val bookmarksItemIc     = BrowserMenuImageText("Bookmarks", R.drawable.ic_bookmarks) { /* Do nothing */ }
 
             val shareItemIc         = BrowserMenuImageText("Share", R.drawable.ic_share) {
@@ -309,46 +201,50 @@ class BrowserFragment : Fragment() {
                 val shareIntent = Intent.createChooser(sendIntent, null)
                 startActivity(shareIntent)
             }
-            val desktopItemIc       = BrowserMenuImageSwitch(
-                R.drawable.ic_desktop,
-                "Desktop View",
-                initialState = { isDesktop },
-                listener = { checked ->
-                    isDesktop = checked
-                    session.toggleDesktopMode(checked, true)
+            val desktopItemIc       = BrowserMenuImageSwitch(R.drawable.ic_desktop, "Desktop View",
+                initialState = { isDesktop }) { checked ->
+                isDesktop = checked
+                geckoEngineSession.toggleDesktopMode(checked, true)
 
-                    return@BrowserMenuImageSwitch
-                })
+                return@BrowserMenuImageSwitch
+            }
 
-            val settingsItem        = BrowserMenuImageText(
-                "Settings",
-                R.drawable.ic_settings
-                ) {
-                    (activity as MainActivity?)!!.setCurrentFragmentVar("settings")
+            val settingsItem        = BrowserMenuImageText("Settings", R.drawable.ic_settings) {
+                //(activity as MainActivity?)!!.setCurrentFragmentVar("settings")
 
-                    requireActivity()
-                        .supportFragmentManager
-                        .beginTransaction()
-                        .addToBackStack("settingsFragment")
-                        .replace(R.id.fragmentContainerView, SettingsFragment(), "settingsFragment")
-                        .commit()
-                }
-            val exitItem            = BrowserMenuImageText(
-                "Exit",
-                R.drawable.ic_exit
-                ) {
-                    sRuntime?.shutdown()
-                    requireActivity().finish()
-                }
+                requireActivity()
+                    .supportFragmentManager
+                    .beginTransaction()
+                    .addToBackStack("settingsFragment")
+                    .replace(R.id.fragmentContainerView, SettingsFragment(), "settingsFragment")
+                    .commit()
+            }
 
-            val items = listOf(menuToolbar, BrowserMenuDivider(), newTabItem, newTabIncognitoItem, BrowserMenuDivider(), extensionsItemIc, BrowserMenuDivider(), historyItemIc, downloadsItemIc, bookmarksItemIc, BrowserMenuDivider(), shareItemIc, desktopItemIc, BrowserMenuDivider(), settingsItem, exitItem)
+
+            val items = listOf(
+                menuToolbar,
+                BrowserMenuDivider(),
+                newTabItem,
+                newTabIncognitoItem,
+                BrowserMenuDivider(),
+                extensionsItemIc,
+                BrowserMenuDivider(),
+                historyItemIc,
+                downloadsItemIc,
+                bookmarksItemIc,
+                BrowserMenuDivider(),
+                shareItemIc,
+                desktopItemIc,
+                BrowserMenuDivider(),
+                settingsItem)
+
             toolBar.display.menuBuilder = BrowserMenuBuilder(items)
-            toolBar.display.hint = "Enter an URL or search"
-            toolBar.edit.hint = "Enter an URL or search"
-            toolBar.elevation = 8F
+            toolBar.display.hint        = "Enter an URL or search"
+            toolBar.edit.hint           = "Enter an URL or search"
+            toolBar.elevation           = 8F
 
             toolBar.setOnUrlCommitListener { url ->
-                session.loadUrl(url)
+                geckoEngineSession.loadUrl(url)
                 toolBar.url = url
 
                 true
@@ -364,41 +260,32 @@ class BrowserFragment : Fragment() {
 
             TabsToolbarFeature(
                 toolbar = toolBar,
-                store = browserStore,
+                store = browserStore!!,
                 sessionId = "sess",
                 lifecycleOwner = this,
                 showTabs = ::showTabs,
-                countBasedOnSelectedTabType = false,
-                tabCounterMenu = TabCounterMenu(requireContext(), iconColor = ContextCompat.getColor(requireContext(), R.color.ic_color_foreground), onItemTapped = {
-                    Toast.makeText(requireActivity().applicationContext, "tAB!!!s 2", Toast.LENGTH_LONG).show()
-                })
+                countBasedOnSelectedTabType = false
             )
         }
 
-        fun registerBackPressed() {
-            requireActivity()
-                .onBackPressedDispatcher
-                .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        if (toolBar.onBackPressed()) return
-
-                        if (canGoBack) session.goBack()
-                        else requireActivity().moveTaskToBack(true)
-                    }
-                })
-        }
-
         setupToolBar()
-        registerBackPressed()
+        geckoView.render(geckoEngineSession)
 
-        geckoView.render(session)
-        session.loadUrl(openUrl.toString())
+        geckoEngineSession.loadUrl(openUrl.toString())
+        toolBar.url = openUrl.toString()
 
         return layout
     }
 
     private fun showTabs() {
         Toast.makeText(requireActivity().applicationContext, "tAB!!!s", Toast.LENGTH_LONG).show()
+
+        requireActivity()
+            .supportFragmentManager
+            .beginTransaction()
+            .addToBackStack("tabsFragment")
+            .replace(R.id.fragmentContainerView, TabsFragment.newInstance(browserStore), "tabsFragment")
+            .commit()
     }
 
     companion object {

@@ -2,7 +2,8 @@
     <PreferenceCategory android:title="ThatCakeID Account">
         <Preference
             android:summary="${email}"
-            android:title="${username}" />
+            android:title="${username}"
+            android:key="accountPref" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="sync"

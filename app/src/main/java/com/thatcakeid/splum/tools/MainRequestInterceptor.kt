@@ -1,4 +1,4 @@
-package com.thatcakeid.splum.classes
+package com.thatcakeid.splum.tools
 
 import android.content.Context
 import mozilla.components.browser.errorpages.ErrorPages
@@ -17,12 +17,20 @@ class MainRequestInterceptor(private val context: Context) : RequestInterceptor 
         isDirectNavigation: Boolean,
         isSubframeRequest: Boolean
     ): RequestInterceptor.InterceptionResponse? {
-        return if (uri.contentEquals("splum:homepage"))
-            RequestInterceptor.InterceptionResponse.Content("splum:homepage")
-        else if (uri.contentEquals("splum:secreturl"))
-            RequestInterceptor.InterceptionResponse.Content("<a href=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\">Here's the secret</a>")
-        else
-            super.onLoadRequest(engineSession, uri, lastUri, hasUserGesture, isSameDomain, isRedirect, isDirectNavigation, isSubframeRequest)
+        return when (uri) {
+            "sample:about" -> RequestInterceptor.InterceptionResponse.Content("splum:homepage")
+            "splum:secreturl" -> RequestInterceptor.InterceptionResponse.Content("<a href=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\">Here's the secret</a>")
+            else -> super.onLoadRequest(
+                engineSession,
+                uri,
+                lastUri,
+                hasUserGesture,
+                isSameDomain,
+                isRedirect,
+                isDirectNavigation,
+                isSubframeRequest
+            )
+        }
     }
 
     override fun onErrorRequest(

@@ -19,11 +19,10 @@
         <item>https://www.ecosia.org/search?q=</item>
     </string-array>
 
-    <string-array name="auto_complete_curls">
+    <string-array name="auto_complete_urls">
         <item>thatcakeid.com</item>
         <item>theclashfruit.me</item>
         <item>cdn.theclashfruit.me</item>
         <item>gitea.theclashfruit.me</item>
-        <item>gianxd.ga</item>
     </string-array>
 </resources>

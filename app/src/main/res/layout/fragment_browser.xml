@@ -11,14 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <mozilla.components.browser.engine.gecko.GeckoEngineView
-            android:id="@+id/geckoView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <mozilla.components.browser.engine.gecko.GeckoEngineView
+        android:id="@+id/geckoView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 </LinearLayout>
