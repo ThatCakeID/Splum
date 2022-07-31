@@ -35,7 +35,6 @@ open class AccountServices {
                 // Respond to negative button press
             }
             .setPositiveButton("Log In") { dialog, which ->
-                // Respond to positive button press
             }
             .show()
     }

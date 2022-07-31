@@ -6,7 +6,7 @@
             android:key="accountPref" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="sync"
+            android:key="syncPref"
             android:title="@string/settings_sync" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_basic_title">

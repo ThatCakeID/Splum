@@ -14,6 +14,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val licensePref = findPreference<Preference>("licensePref")
         val accountPref = findPreference<Preference>("accountPref")
+        val syncPref    = findPreference<Preference>("syncPref")
         val copyPref    = findPreference<Preference>("copyPref")
 
         var copyClicks  = 0
@@ -30,6 +31,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         accountPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             AccountServices().getAccount(requireContext())
+
+            return@OnPreferenceClickListener true
+        }
+
+        syncPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            StorageServices().requireCloudAccess("Splum", "com.thatcakeid.splum", requireContext())
 
             return@OnPreferenceClickListener true
         }
