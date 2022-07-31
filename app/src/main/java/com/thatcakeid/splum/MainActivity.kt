@@ -1,9 +1,9 @@
 package com.thatcakeid.splum
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import com.thatcakeid.splum.fragments.BrowserFragment
 import com.thatcakeid.splum.tools.MainRequestInterceptor
 import mozilla.components.browser.engine.gecko.GeckoEngine
