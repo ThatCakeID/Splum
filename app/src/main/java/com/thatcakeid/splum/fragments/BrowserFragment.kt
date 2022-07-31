@@ -3,19 +3,18 @@ package com.thatcakeid.splum.fragments
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
 import com.thatcakeid.splum.tools.MainRequestInterceptor
 import mozilla.components.browser.domains.CustomDomains
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
-import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.GeckoEngineSession
 import mozilla.components.browser.engine.gecko.GeckoEngineView
 import mozilla.components.browser.menu.BrowserMenuBuilder
@@ -23,19 +22,11 @@ import mozilla.components.browser.menu.item.BrowserMenuDivider
 import mozilla.components.browser.menu.item.BrowserMenuImageSwitch
 import mozilla.components.browser.menu.item.BrowserMenuImageText
 import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
-import mozilla.components.browser.state.engine.EngineMiddleware
-import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.DefaultSettings
-import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.toolbar.Toolbar
-import mozilla.components.feature.session.SessionFeature
-import mozilla.components.feature.session.SessionUseCases
-import mozilla.components.feature.tabs.TabsUseCases
-import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.utils.URLStringUtils
@@ -70,7 +61,7 @@ class BrowserFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val layout: View = inflater.inflate(R.layout.fragment_browser, container, false)
 
         val geckoView = layout.findViewById<GeckoEngineView>(R.id.geckoView)
@@ -173,12 +164,7 @@ class BrowserFragment : Fragment() {
                 secondaryImageResource = R.drawable.ic_bookmark,
                 secondaryContentDescription = "Remove from favorites",
                 isInPrimaryState = { !isFavourite },
-                listener = {
-                    if(isFavourite)
-                        isFavourite = false
-                    else
-                        isFavourite = true
-                })
+                listener = { isFavourite = !isFavourite })
 
             val menuToolbar         = BrowserMenuItemToolbar(listOf(backIc, forwardIc, reloadIc, bookmarkIc))
 

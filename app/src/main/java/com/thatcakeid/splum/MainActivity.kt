@@ -10,7 +10,6 @@ import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.DefaultSettings
-import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.tabs.TabsUseCases
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
@@ -20,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private var sRuntime: GeckoRuntime? = null
     private var url: String? = null
 
-    public var browserStore: BrowserStore? = null
+    var browserStore: BrowserStore? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

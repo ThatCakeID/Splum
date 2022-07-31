@@ -1,23 +1,20 @@
 package com.thatcakeid.splum.fragments
 
 import android.os.Bundle
-import android.os.Parcelable
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.thatcakeid.splum.MainActivity
 import com.thatcakeid.splum.R
-import mozilla.components.browser.engine.gecko.GeckoEngineView
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.tabstray.TabsAdapter
 import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.feature.tabs.tabstray.TabsFeature
-import org.mozilla.geckoview.GeckoRuntime
 
 class TabsFragment : Fragment() {
     private var browserStore: BrowserStore? = null
@@ -31,7 +28,7 @@ class TabsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val layout: View = inflater.inflate(R.layout.fragment_tabs, container, false)
 
         browserStore = (activity as MainActivity?)!!.browserStore

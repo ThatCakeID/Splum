@@ -16,7 +16,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val accountPref = findPreference<Preference>("accountPref")
         val copyPref    = findPreference<Preference>("copyPref")
 
-        var copyClicks  = 0;
+        var copyClicks  = 0
 
         licensePref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             MaterialAlertDialogBuilder(requireContext(), R.style.Theme_Splum_DialogTheme)
