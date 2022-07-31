@@ -9,20 +9,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  */
 open class AccountServices {
 
-    open fun getAccount(appContext: Context): Boolean {
-        checkForAccount("com.thatcakeid.splum", appContext)
+    open fun getAccount(appContext: Context, uToken: String?): Boolean {
+        if(uToken != null)
+            logIn(appContext)
+        else
+            accountDetails(uToken, appContext)
 
         return true
     }
 
-    private fun checkForAccount(appPackage: String, appContext: Context) {
-        val isLoggedIn        = false
-        val cAccount: String? = null
-
-        if(isLoggedIn) {
-            accountDetails(cAccount, appContext)
-        } else
-            logIn(appContext)
+    open fun isLoggedIn(appContext: Context): Boolean {
+        return true
     }
 
     private fun logIn(appContext: Context) {
@@ -32,7 +29,7 @@ open class AccountServices {
         MaterialAlertDialogBuilder(appContext)
             .setView(customAlertDialogView)
             .setNegativeButton("Cancel") { dialog, which ->
-                // Respond to negative button press
+
             }
             .setPositiveButton("Log In") { dialog, which ->
             }
@@ -42,5 +39,16 @@ open class AccountServices {
     private fun accountDetails(cAccount: String?, appContext: Context) {
         if(cAccount == null)
             logIn(appContext)
+        else {
+            MaterialAlertDialogBuilder(appContext)
+                .setTitle("Account Details")
+                .setMessage("Username: joemama69\nE-Mail: admin@joemama69.com")
+                .setNeutralButton("Log out") { dialog, which ->
+
+                }
+                .setPositiveButton("Ok") { dialog, which ->
+                }
+                .show()
+        }
     }
 }

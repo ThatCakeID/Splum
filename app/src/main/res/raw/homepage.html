@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+    <title>Splum</title>
+
+    <style>
+      * {
+          padding: 0;
+          margin: 0;
+      }
+
+      .searchContainer {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          width: 100vw;
+      }
+      .searchContainer h1 {
+          text-align: center;
+          margin-bottom: 16px;
+      }
+
+      .searchBar {
+          width: 80vw;
+      }
+
+      .searchBar input {
+          filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.25));
+          background: #fff;
+
+          border-radius: 32px;
+          border: none;
+          padding: 8px 16px;
+
+          width: 80vw;
+      }
+
+      .searchBar #autoCompleteDropdown {
+          filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.25));
+          background: #fff;
+
+          border-radius: 32px;
+          border: none;
+          padding: 8px 16px;
+
+          margin-top: 8px;
+
+          width: 80vw;
+      }
+  </style>
+  </head>
+  <body>
+    <div class="searchContainer">
+      <form action="::SearchEngine">
+        <h1>Splum</h1>
+
+        <div class="searchBar">
+          <input type="text" placeholder="Search..." name="q">
+          <div id="autoCompleteDropdown" style="">
+            autocomplete!!!
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script>
+  const pagesVisited = ::PagesVisited;
+  const searchEngine = "::SearchEngine";
+  const isDarkMode   = ::IsDarkMode;
+
+  if(isDarkMode) {
+    document.body.style = "background: #151A1B; color: #fff;";
+  } else {
+    document.body.style = "background: #fff; color: #151A1B;";
+  }
+</script>
+  </body>
+</html>

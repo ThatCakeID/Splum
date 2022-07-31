@@ -30,7 +30,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         accountPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            AccountServices().getAccount(requireContext())
+            AccountServices().getAccount(requireContext(), "smh")
 
             return@OnPreferenceClickListener true
         }
