@@ -37,7 +37,7 @@ class MainRequestInterceptor(private val context: Context) : RequestInterceptor 
                 val response = context.resources.openRawResource(R.raw.homepage).readBytes().decodeToString()
                     .replace("::IsDarkMode", isDarkMode.toString())
                     .replace("::PagesVisited", "[]")
-                    .replace("::SearchEngine", sharedPreferences.getString("search_engine", "https://google.com/search?q=")!!)
+                    .replace("::SearchEngine", sharedPreferences.getString("search_engine", "https://google.com/search")!!)
                     .replace("#", "%23")
 
                 RequestInterceptor.InterceptionResponse.Content(response)
