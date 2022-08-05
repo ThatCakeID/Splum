@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             if (sharedPreferences.getBoolean("home_page_enabled", false))
                 "splum:homepage"
             else
-                "https://google.com/"
+                "about:blank"
         }
 
         supportFragmentManager
