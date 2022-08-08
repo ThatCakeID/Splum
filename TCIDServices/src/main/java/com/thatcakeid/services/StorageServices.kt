@@ -7,7 +7,7 @@ import com.android.volley.toolbox.Volley
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 open class StorageServices {
-    open fun requireCloudAccess(appName: String, appPackage: String, appContext: Context) {
+    open fun requireCloudAccess(appName: String, appPackage: String, appContext: Context, uToken: String?) {
         if(!AccountServices().isLoggedIn(appContext))
             AccountServices().getAccount(appContext, null)
         else {
@@ -37,7 +37,18 @@ open class StorageServices {
                     queue.add(stringRequest)
                 }
                 .setNegativeButton("Deny") { _, _ -> }
-                .setPositiveButton("Grant") { _, _ -> }
+                .setPositiveButton("Grant") { _, _ ->
+                    if(uToken != null) {
+                        val queue = Volley.newRequestQueue(appContext)
+                        val url = "https://theclashfruit.me/api/v1/storageAccessGrant"
+
+                        val stringRequest = StringRequest(Request.Method.POST, url,
+                            { response ->
+
+                            },
+                            { })
+                    }
+                }
                 .show()
         }
     }

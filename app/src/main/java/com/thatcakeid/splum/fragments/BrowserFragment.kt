@@ -1,5 +1,6 @@
 package com.thatcakeid.splum.fragments
 
+import android.app.DownloadManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,8 +9,8 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.media.MediaMetadata
 import android.media.session.PlaybackState
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +18,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -42,11 +42,13 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.mediasession.MediaSession
+import mozilla.components.concept.fetch.Response
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.tabs.toolbar.TabsToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.utils.URLStringUtils
 import org.mozilla.geckoview.GeckoRuntime
+
 
 class BrowserFragment : Fragment() {
     private val shippedDomainsProvider = ShippedDomainsProvider()
@@ -221,6 +223,24 @@ class BrowserFragment : Fragment() {
             }
 
             override fun onMediaDeactivated() { mediaSession!!.release() }
+
+            override fun onExternalResource(
+                url: String,
+                fileName: String?,
+                contentLength: Long?,
+                contentType: String?,
+                cookie: String?,
+                userAgent: String?,
+                isPrivate: Boolean,
+                response: Response?
+            ) {
+                val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
+                val downloadRequest = DownloadManager.Request(Uri.parse(url))
+
+                downloadRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+
+                downloadManager!!.enqueue(downloadRequest)
+            }
         })
 
         fun setupToolBar() {

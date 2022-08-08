@@ -30,13 +30,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         accountPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            AccountServices().getAccount(requireContext(), "smh")
+            //AccountServices().getAccount(requireContext(), "smh")
 
             return@OnPreferenceClickListener true
         }
 
         syncPref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            StorageServices().requireCloudAccess("Splum", "com.thatcakeid.splum", requireContext())
+            //StorageServices().requireCloudAccess("Splum", "com.thatcakeid.splum", requireContext(), null)
 
             return@OnPreferenceClickListener true
         }
