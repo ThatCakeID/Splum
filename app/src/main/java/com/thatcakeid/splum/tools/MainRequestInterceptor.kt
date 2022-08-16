@@ -40,9 +40,13 @@ class MainRequestInterceptor(private val context: Context) : RequestInterceptor 
                     .replace("::SearchEngine", sharedPreferences.getString("search_engine", "https://google.com/search")!!)
                     .replace("#", "%23")
 
+                RequestInterceptor.InterceptionResponse.Url("splum:homepage")
                 RequestInterceptor.InterceptionResponse.Content(response)
             }
-            "splum:secreturl" -> RequestInterceptor.InterceptionResponse.Content("<a href=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\">Here's the secret</a>")
+            "splum:secreturl" -> {
+                RequestInterceptor.InterceptionResponse.Url("splum:secreturl")
+                RequestInterceptor.InterceptionResponse.Content("<a href=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\">Here's the secret</a>")
+            }
             else -> super.onLoadRequest(
                 engineSession,
                 uri,
