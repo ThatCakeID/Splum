@@ -12,11 +12,14 @@ import android.graphics.Bitmap
 import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -176,7 +179,7 @@ class BrowserFragment : Fragment() {
                 mediaSession!!.isActive = true
 
                 val playbackState = PlaybackState.Builder()
-                    .setActions(PlaybackState.ACTION_PLAY)
+                    .setActions(PlaybackState.ACTION_PLAY_PAUSE)
                     .build()
 
                 mediaSession!!.setPlaybackState(playbackState)
@@ -235,7 +238,11 @@ class BrowserFragment : Fragment() {
                 response: Response?
             ) {
                 val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
-                val downloadRequest = DownloadManager.Request(Uri.parse(url))
+                val downloadRequest = DownloadManager
+                    .Request(Uri.parse(url))
+                    .setMimeType(contentType)
+                    .setTitle(fileName!!)
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
 
                 downloadRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
 
@@ -285,7 +292,11 @@ class BrowserFragment : Fragment() {
                 secondaryImageResource = R.drawable.ic_bookmark,
                 secondaryContentDescription = "Remove from favorites",
                 isInPrimaryState = { !isFavourite },
-                listener = { isFavourite = !isFavourite })
+                listener = {
+                    isFavourite = !isFavourite
+
+
+                })
 
             val menuToolbar         = BrowserMenuItemToolbar(listOf(backIc, forwardIc, reloadIc, bookmarkIc))
 

@@ -6,6 +6,14 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission        android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,7 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Splum"
         tools:targetApi="31">
-
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|locale|layoutDirection|smallestScreenSize|screenLayout"
@@ -39,6 +46,10 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+                <data android:scheme="splum" />
+                <data android:scheme="about" />
+                <data android:scheme="chrome" />
+                <data android:scheme="firefox" />
             </intent-filter>
         </activity>
     </application>
