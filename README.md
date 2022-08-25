@@ -13,6 +13,10 @@
 </p>
 
 <p align="center">
+  ⚠ The project is no longer maintained. ⚠
+</p>
+
+<p align="center">
   A new revolutionary browser from ThatCakeID that's built on Firefox's engine.
 </p>
 
